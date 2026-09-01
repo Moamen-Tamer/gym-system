@@ -1,0 +1,15 @@
+{
+  "name": "Pulse",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/server/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server/server.ts",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}
