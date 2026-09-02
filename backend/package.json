@@ -5,7 +5,20 @@
   "main": "dist/server/server.js",
   "scripts": {
     "dev": "tsx watch src/server/server.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "start": "node dist/server/server.js",
+    "check": "tsc --noEmit",
+    "seed": "tsx seeds/seed.ts",
+    "migrate:mongodb": "migrate-mongo",
+    "migrate:mongodb:create": "migrate-mongo create",
+    "migrate:mongodb:up": "migrate-mongo up",
+    "migrate:mongodb:down": "migrate-mongo down",
+    "migrate:mongodb:status": "migrate-mongo status",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:reset": "supabase db reset",
+    "supabase:migration:new": "supabase migration new",
+    "supabase:push": "supabase db push"
   },
   "keywords": [],
   "type": "module",
