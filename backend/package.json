@@ -12,14 +12,14 @@
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
-    "@types/mongoose": "^5.11.96",
+    "@types/mongoose": "^5.11.97",
     "@types/node": "^26.4.1",
     "nodemon": "^3.1.14",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.113.0",
+    "@supabase/supabase-js": "^2.114.0",
     "cookie-parser": "^1.4.7",
     "express": "^5.2.1",
     "express-rate-limit": "^8.7.0",

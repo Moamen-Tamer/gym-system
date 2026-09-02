@@ -1,4 +1,3 @@
-import e from "express";
 import { z } from "zod";
 
 const envSchema = z.object({
@@ -11,7 +10,10 @@ const envSchema = z.object({
 
     MONGO_ATLAS_URI: z.url("MONGO_ATLAS_URI must be a valid MongoDB connection string"),
 
-    REDIS_CLOUD_URL: z.url("REDIS_URL must be a valid Redis connection string")
+    REDIS_CLOUD_URL: z.url("REDIS_URL must be a valid Redis connection string"),
+
+    ADMIN_EMAIL: z.string().email().default("admin@gym.com"),
+    ADMIN_PASSWORD: z.string().min(6, "ADMIN_PASSWORD must be at least 6 characters")
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -30,7 +32,10 @@ export const env = {
     supabaseAnonKey: parsed.data.SUPABASE_ANON_KEY,
     supabaseServiceRoleKey: parsed.data.SUPABASE_SERVICE_ROLE_KEY,
 
-    mongoAtlas_Uri: parsed.data.MONGO_ATLAS_URI,
+    mongoAtlasUri: parsed.data.MONGO_ATLAS_URI,
 
-    redisCloudUrl: parsed.data.REDIS_CLOUD_URL
+    redisCloudUrl: parsed.data.REDIS_CLOUD_URL,
+
+    adminEmail: parsed.data.ADMIN_EMAIL,
+    adminPassword: parsed.data.ADMIN_PASSWORD
 };
