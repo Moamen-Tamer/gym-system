@@ -74,3 +74,9 @@ export interface MemberReport {
     workouts: Workout[];
     stats: DashboardStats;
 };
+
+export const PLAN_WORKOUT_DAYS: Record<string, string[]> = {
+    basic: ["monday", "wednesday", "friday"],
+    standard: ["monday", "tuesday", "wednesday", "thursday", "friday"],
+    premium: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+};

@@ -4,7 +4,7 @@ import { HttpError } from "../errors/HttpError.js";
 
 export const getWorkoutDaysForPlan = (plan: string): string[] => {
     const days = PLAN_WORKOUT_DAYS[plan];
-    
+
     return days ?? ["monday", "wednesday", "friday"];
 };
 
@@ -81,9 +81,9 @@ export const insertMember = async (
 
     if (error) throw new HttpError(500, "Failed to create member");
 
-    return ((data ?? []) as unknown as Member[]).map(m => ({
-        ...m,
-        allowed_workout_days: m.allowed_workout_days ?? []
+    return ((data ?? []) as unknown as Member[]).map(member => ({
+        ...member,
+        allowed_workout_days: member.allowed_workout_days ?? []
     }));
 };
 
