@@ -25,6 +25,7 @@
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^26.4.1",
     "nodemon": "^3.1.14",
@@ -38,6 +39,7 @@
     "express-rate-limit": "^8.7.0",
     "helmet": "^8.3.0",
     "ioredis": "^6.0.0",
+    "jsonwebtoken": "^9.0.3",
     "migrate-mongo": "^14.0.7",
     "mongoose": "^9.9.4",
     "pino": "^10.3.1",
