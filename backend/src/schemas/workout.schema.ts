@@ -1,5 +1,5 @@
 import z from "zod";
-import { uuid } from "./common.js";
+import { uuid, objectId } from "./common.js";
 
 const workoutType = z.enum(["strength", "cardio", "flexibility", "hiit", "crossfit", "yoga", "other"], {
     message: "workout type must be strength, cardio, flexibility, hiit, crossfit, yoga, or other"
@@ -19,7 +19,7 @@ export const stopWorkoutSchema = z.object({
     }),
     query: z.unknown(),
     params: z.object({
-        id: uuid("workout")
+        id: objectId("workout")
     })
 });
 
@@ -29,7 +29,7 @@ export const feedbackSchema = z.object({
     }),
     query: z.unknown(),
     params: z.object({
-        id: uuid("workout")
+        id: objectId("workout")
     })
 });
 
