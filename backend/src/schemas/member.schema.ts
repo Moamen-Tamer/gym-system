@@ -39,6 +39,17 @@ export const createMemberSchema = z.object({
     params: z.unknown()
 });
 
+export const listMembersQuerySchema = z.object({
+    body: z.unknown(),
+
+    query: z.object({
+        page: z.coerce.number().int().positive().default(1),
+        limit: z.coerce.number().int().positive().max(100).default(20)
+    }),
+
+    params: z.unknown()
+});
+
 export const updateMemberSchema = z.object({
     body: z.object({
         fullName: fullName.optional(),

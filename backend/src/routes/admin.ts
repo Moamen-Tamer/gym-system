@@ -5,13 +5,13 @@ import { authorizeAdmin } from "../middlewares/authorization.js";
 import { authLimiter } from "../middlewares/limiter.js";
 import { validate } from "../middlewares/validate.js";
 import { adminLoginSchema } from "../schemas/auth.schema.js";
-import { createMemberSchema, memberIdSchema, updateMemberSchema, changeSubscriptionSchema } from "../schemas/member.schema.js";
+import { createMemberSchema, memberIdSchema, updateMemberSchema, changeSubscriptionSchema, listMembersQuerySchema } from "../schemas/member.schema.js";
 import { adminWorkoutHistorySchema } from "../schemas/workout.schema.js";
 
 const admin: Router = express.Router();
 
 admin.post('/login', authLimiter, validate(adminLoginSchema), login);
-admin.get('/members', authenticateAdmin, authorizeAdmin, listMembers);
+admin.get('/members', authenticateAdmin, authorizeAdmin, validate(listMembersQuerySchema), listMembers);
 admin.post('/members', authenticateAdmin, authorizeAdmin, validate(createMemberSchema), createMember);
 admin.put('/members/:id', authenticateAdmin, authorizeAdmin, validate(updateMemberSchema), updateMember);
 admin.delete('/members/:id', authenticateAdmin, authorizeAdmin, validate(memberIdSchema), deleteMember);
