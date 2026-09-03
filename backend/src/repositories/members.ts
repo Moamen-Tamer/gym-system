@@ -57,34 +57,32 @@ export const countMembers = async (): Promise<number> => {
     return count ?? 0;
 };
 
-export const insertMember = async (
+export const updateMemberAfterSignup = async (
     id: string,
-    fullName: string,
-    email: string,
     phone: string | null,
     subscriptionPlan: string
-): Promise<Member[]> => {
+): Promise<Member | null> => {
     const workoutDays = getWorkoutDaysForPlan(subscriptionPlan);
 
     const { data, error } = await supabase
         .from("members")
-        .insert({
-            id,
-            full_name: fullName,
-            email,
-            phone: phone ?? null,
+        .update({
+            phone,
             subscription_plan: subscriptionPlan,
-            subscription_status: "active",
             allowed_workout_days: workoutDays
         })
-        .select("id, full_name, email, phone, subscription_plan, subscription_status, allowed_workout_days, created_at, updated_at");
+        .eq("id", id)
+        .select(
+            "id, full_name, email, phone, subscription_plan, subscription_status, allowed_workout_days, created_at, updated_at"
+        )
+        .single();
 
     if (error) throw new HttpError(500, "Failed to create member");
 
-    return ((data ?? []) as unknown as Member[]).map(member => ({
-        ...member,
-        allowed_workout_days: member.allowed_workout_days ?? []
-    }));
+    return {
+        ...data,
+        allowed_workout_days: data.allowed_workout_days ?? []
+    } as Member;
 };
 
 export const updateMember = async (

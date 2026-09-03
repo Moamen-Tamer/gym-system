@@ -1,5 +1,5 @@
 import { HttpError } from "../errors/HttpError.js";
-import { fetchMemberById, fetchAllMembers, countMembers, insertMember, updateMember, deleteMember, changeSubscription } from "../repositories/members.js";
+import { fetchMemberById, fetchAllMembers, countMembers, updateMemberAfterSignup, updateMember, deleteMember, changeSubscription } from "../repositories/members.js";
 import { deleteAuthUser, existsByEmail, signUp } from "../repositories/auth.js";
 import { invalidateMemberCache, invalidateDashboardCache, invalidateReportCache } from "../repositories/cache.js";
 import Workout from "../models/workout.model.js";
@@ -55,8 +55,11 @@ export const createMember = async (
 
     if (!user) throw new HttpError(500, "Failed to create auth user.");
 
-    const members = await insertMember(user.id, fullName, email, phone, subscriptionPlan);
-    const member = members[0];
+    const member = await updateMemberAfterSignup(
+        user.id, 
+        phone, 
+        subscriptionPlan
+    );
 
     if (!member) throw new HttpError(500, "Failed to create member.");
 
