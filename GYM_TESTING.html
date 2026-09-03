@@ -1,0 +1,1211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0d0f">
+<title>PulseGym API / Test Console</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --ink:#eef1ec;
+  --dim:#8a9490;
+  --dimmer:#5b6460;
+  --floor:#0a0d0f;
+  --panel:#101413;
+  --panel-2:#151a18;
+  --line:#232b27;
+  --line-soft:#1a201d;
+  --heat:#ff5a3c;
+  --heat-dim:#7a2f22;
+  --volt:#9fef5a;
+  --volt-dim:#3d5a26;
+  --violet:#b98cf2;
+  --violet-dim:#4a3a63;
+  --amber:#f5b942;
+  --cool:#4fb8d6;
+  --display:'Barlow Condensed',sans-serif;
+  --body:'Barlow',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--floor);
+  color:var(--ink);
+  font:16px/1.6 var(--body);
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:.5;
+  background-image:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(255,90,60,.09), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 10%, rgba(159,239,90,.05), transparent 60%);
+}
+a{color:var(--heat);text-decoration:none;}
+a:hover{text-decoration:underline;}
+button{font:inherit;}
+::selection{background:var(--heat);color:#0a0d0f;}
+.shell{width:min(1320px,calc(100% - 40px));margin:auto;position:relative;z-index:1;}
+code,.mono{font-family:var(--mono);}
+
+/* ---------- top identity bar ---------- */
+.topbar{
+  border-bottom:1px solid var(--line);
+  padding:16px 0;
+}
+.topbar-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.mark{display:flex;align-items:center;gap:10px;}
+.mark-dot{width:10px;height:10px;border-radius:50%;background:var(--heat);box-shadow:0 0 14px var(--heat);flex-shrink:0;}
+.mark-text{font:600 13px/1 var(--body);letter-spacing:.02em;color:var(--ink);}
+.mark-text b{color:var(--heat);font-weight:700;}
+.stack-chips{display:flex;gap:8px;flex-wrap:wrap;}
+.stack-chip{
+  font:500 11px/1 var(--mono);
+  color:var(--dim);
+  border:1px solid var(--line);
+  padding:6px 10px;
+  border-radius:3px;
+  white-space:nowrap;
+}
+
+/* ---------- hero ---------- */
+.hero{padding:56px 0 34px;border-bottom:1px solid var(--line);}
+.hero h1{
+  font:800 clamp(46px,8vw,104px)/.92 var(--display);
+  letter-spacing:-.01em;
+  margin:0 0 20px;
+  text-transform:uppercase;
+  max-width:960px;
+}
+.hero h1 .hl{color:var(--heat);}
+.hero-lede{
+  max-width:640px;
+  color:var(--dim);
+  font-size:17px;
+  line-height:1.65;
+  margin:0 0 30px;
+}
+.hero-meta{display:flex;gap:28px;flex-wrap:wrap;padding-top:22px;border-top:1px solid var(--line-soft);}
+.hero-meta-item{display:flex;flex-direction:column;gap:4px;}
+.hero-meta-item .n{font:700 26px/1 var(--display);color:var(--ink);}
+.hero-meta-item .l{font:500 11px/1 var(--body);color:var(--dimmer);text-transform:uppercase;letter-spacing:.06em;}
+
+/* ---------- console tabs ---------- */
+.console-tabs{
+  display:flex;
+  gap:2px;
+  border-bottom:1px solid var(--line);
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.console-tabs::-webkit-scrollbar{display:none;}
+.ctab{
+  flex-shrink:0;
+  padding:16px 22px;
+  background:none;
+  border:none;
+  border-bottom:2px solid transparent;
+  color:var(--dimmer);
+  font:600 14px/1 var(--body);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  transition:color .15s;
+}
+.ctab .tag{
+  width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;
+}
+.ctab:hover{color:var(--ink);}
+.ctab.active{color:var(--ink);border-bottom-color:var(--heat);}
+.ctab.active .tag{background:var(--heat);}
+
+.view{display:none;padding:42px 0 100px;}
+.view.active{display:block;}
+
+/* ---------- section framing ---------- */
+.sec{scroll-margin-top:20px;margin-bottom:60px;}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;flex-wrap:wrap;}
+.sec-num{font:700 15px/1 var(--mono);color:var(--heat);}
+.sec h2{
+  font:700 clamp(28px,3.6vw,42px)/1 var(--display);
+  text-transform:uppercase;
+  letter-spacing:-.005em;
+  margin:0;
+  color:var(--ink);
+}
+.sec-intro{color:var(--dim);max-width:680px;margin:14px 0 26px;font-size:15px;}
+
+/* ---------- generic panel / callout ---------- */
+.panel{background:var(--panel);border:1px solid var(--line);}
+.callout{
+  border:1px solid var(--heat-dim);
+  background:linear-gradient(120deg,rgba(255,90,60,.09),rgba(16,20,19,.3));
+  padding:18px 20px;
+  margin:20px 0;
+  font-size:14px;
+}
+.callout strong{color:var(--heat);}
+.callout.volt{border-color:var(--volt-dim);background:linear-gradient(120deg,rgba(159,239,90,.08),rgba(16,20,19,.3));}
+.callout.volt strong{color:var(--volt);}
+.callout.violet{border-color:var(--violet-dim);background:linear-gradient(120deg,rgba(185,140,242,.08),rgba(16,20,19,.3));}
+.callout.violet strong{color:var(--violet);}
+
+/* ---------- credentials grid ---------- */
+.cred-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);}
+.cred-grid.two{grid-template-columns:repeat(2,1fr);}
+.cred-cell{background:var(--panel);padding:18px 20px;}
+.cred-label{font:600 10px/1 var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--dimmer);display:block;margin-bottom:8px;}
+.cred-cell code{font-size:13px;color:var(--ink);word-break:break-word;}
+
+/* ---------- command block ---------- */
+.command{
+  position:relative;background:#050706;border:1px solid var(--line);
+  padding:16px 52px 16px 18px;overflow:auto;white-space:pre;
+  color:#c9d4cd;font:13px/1.6 var(--mono);
+}
+.command::before{content:"$";color:var(--volt);margin-right:12px;}
+.copy-btn{
+  position:absolute;top:8px;right:8px;color:var(--ink);background:var(--panel-2);
+  border:1px solid var(--line);padding:7px 10px;cursor:pointer;font-size:11px;
+  font-family:var(--mono);
+}
+.copy-btn:hover{border-color:var(--heat);}
+
+/* ---------- steps ---------- */
+.steps{counter-reset:step;list-style:none;padding:0;margin:0;display:grid;gap:10px;}
+.steps li{
+  counter-increment:step;position:relative;padding:15px 18px 15px 54px;
+  background:var(--panel);border:1px solid var(--line);font-size:14px;color:var(--dim);
+}
+.steps li::before{
+  content:counter(step,decimal-leading-zero);position:absolute;left:16px;top:15px;
+  color:var(--heat);font:700 12px/1 var(--mono);
+}
+.steps li strong{color:var(--ink);}
+.steps code{color:var(--ink);}
+
+/* ---------- endpoint checklist cards (frontend map + checklist) ---------- */
+.ep-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.ep-card{
+  background:var(--panel);border:1px solid var(--line);padding:16px;
+  transition:border-color .15s,transform .15s;
+}
+.ep-card:hover{border-color:#3a453f;transform:translateY(-2px);}
+.ep-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:11px;}
+.method{font:700 11px/1 var(--mono);padding:4px 8px;border:1px solid currentColor;letter-spacing:.02em;}
+.m-post{color:var(--volt);}
+.m-get{color:var(--cool);}
+.m-put{color:var(--amber);}
+.m-patch{color:var(--violet);}
+.m-delete{color:var(--heat);}
+.chk{appearance:none;width:18px;height:18px;border:1px solid #3a453f;background:transparent;cursor:pointer;flex-shrink:0;}
+.chk:checked{background:var(--volt);border-color:var(--volt);box-shadow:inset 0 0 0 4px var(--panel);}
+.ep-path{display:block;font:13px/1.5 var(--mono);color:#d8e3dc;margin-bottom:9px;overflow-wrap:anywhere;}
+.ep-card p{margin:0;color:var(--dim);font-size:12.5px;line-height:1.55;}
+.ep-card p strong{color:var(--ink);}
+.ep-card .auth-badge{
+  display:inline-block;font:600 9.5px/1 var(--body);text-transform:uppercase;letter-spacing:.05em;
+  padding:2px 6px;margin-left:6px;vertical-align:1px;
+}
+.auth-member{color:var(--cool);border:1px solid var(--cool);}
+.auth-admin{color:var(--violet);border:1px solid var(--violet);}
+.auth-public{color:var(--dimmer);border:1px solid var(--dimmer);}
+
+/* ---------- live sample blocks ---------- */
+.cat-heading{
+  font:700 22px/1.15 var(--display);text-transform:uppercase;letter-spacing:.01em;
+  margin:44px 0 16px;color:var(--ink);display:flex;align-items:center;gap:12px;
+}
+.cat-heading:first-child{margin-top:0;}
+.cat-heading .dash{flex:1;height:1px;background:var(--line);}
+.sample{border:1px solid var(--line);background:var(--panel);margin-bottom:14px;}
+.sample-head{
+  display:flex;align-items:center;gap:13px;padding:13px 17px;border-bottom:1px solid var(--line);
+  background:var(--panel-2);flex-wrap:wrap;
+}
+.sample-method{font:700 11px/1 var(--mono);padding:3px 8px;border:1px solid currentColor;flex-shrink:0;}
+.sample-name{color:var(--ink);font-size:13.5px;font-weight:600;}
+.sample-url{color:var(--dim);font-size:11.5px;font-family:var(--mono);margin-left:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:440px;}
+.sample-label{font:600 10px/1 var(--body);text-transform:uppercase;letter-spacing:.09em;color:var(--dimmer);padding:11px 17px 0;}
+.sample-code{
+  background:#050706;padding:14px 17px;white-space:pre-wrap;word-break:break-word;
+  font:12.5px/1.65 var(--mono);color:#c9d4cd;overflow-x:auto;border-bottom:1px solid var(--line);
+}
+.sample-code:last-child{border-bottom:none;}
+.sample-code .k{color:var(--cool);}
+.sample-code .s{color:var(--volt);}
+.sample-code .n{color:var(--amber);}
+.sample-code .b{color:var(--heat);}
+.sample-code .z{color:var(--dimmer);}
+.sample-empty{padding:11px 17px;color:var(--dimmer);font-size:12px;font-style:italic;border-bottom:1px solid var(--line);}
+.status-row{display:flex;align-items:center;gap:10px;padding:9px 17px 0;}
+.status-chip{font:700 10.5px/1 var(--mono);padding:3px 8px;border:1px solid;}
+.st-2{color:var(--volt);border-color:var(--volt);}
+.st-4{color:var(--amber);border-color:var(--amber);}
+.st-40{color:var(--heat);border-color:var(--heat);}
+.sample-note{padding:0 17px 13px;font-size:12px;color:var(--dimmer);}
+
+/* ---------- data model / db cards ---------- */
+.db-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.db-card{background:var(--panel);border:1px solid var(--line);padding:20px;}
+.db-card .db-icon{
+  width:34px;height:34px;border:1px solid currentColor;display:flex;align-items:center;justify-content:center;
+  font:700 13px/1 var(--mono);margin-bottom:14px;
+}
+.db-card h4{font:600 17px/1.2 var(--body);margin:0 0 6px;color:var(--ink);}
+.db-card .role{font:600 10.5px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:block;}
+.db-card p{margin:0;color:var(--dim);font-size:13px;line-height:1.6;}
+.db-card ul{margin:12px 0 0;padding-left:16px;color:var(--dim);font-size:12.5px;line-height:1.7;}
+.db-card ul code{color:var(--ink);}
+
+/* ---------- table ---------- */
+.table-wrap{overflow-x:auto;border:1px solid var(--line);}
+table{width:100%;border-collapse:collapse;min-width:640px;}
+th{background:var(--panel-2);color:var(--dimmer);font:600 10.5px/1 var(--body);text-align:left;text-transform:uppercase;letter-spacing:.06em;}
+th,td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top;font-size:13px;}
+tr:last-child td{border-bottom:none;}
+td{color:var(--dim);}
+td:first-child{color:var(--ink);font-family:var(--mono);}
+tr:hover td{background:rgba(255,255,255,.012);}
+
+/* ---------- pill legend ---------- */
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:18px 0 0;}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--dim);}
+.legend-item .sw{width:10px;height:10px;border:1px solid currentColor;flex-shrink:0;}
+
+/* ---------- footer ---------- */
+.footer{
+  border-top:1px solid var(--line);padding:26px 0;display:flex;justify-content:space-between;
+  gap:16px;flex-wrap:wrap;color:var(--dimmer);font-size:12px;
+}
+.footer .heat-text{color:var(--heat);}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .ep-grid{grid-template-columns:1fr;}
+  .db-grid{grid-template-columns:1fr;}
+  .cred-grid{grid-template-columns:1fr;}
+  .cred-grid.two{grid-template-columns:1fr;}
+}
+@media (max-width:640px){
+  .shell{width:min(100% - 24px,1320px);}
+  .hero{padding:40px 0 26px;}
+  .hero-meta{gap:20px;}
+  .sample-url{display:none;}
+  .sample-head{gap:10px;}
+  .ctab{padding:14px 16px;font-size:13px;}
+  .topbar-row{flex-direction:column;align-items:flex-start;}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  .ep-card{transition:none;}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="shell topbar-row">
+    <div class="mark"><span class="mark-dot"></span><span class="mark-text">PulseGym API <b>/</b> Test Console</span></div>
+    <div class="stack-chips">
+      <span class="stack-chip">Express + TypeScript</span>
+      <span class="stack-chip">Supabase (PostgreSQL)</span>
+      <span class="stack-chip">MongoDB Atlas</span>
+      <span class="stack-chip">Redis Cloud</span>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="shell">
+    <h1>Get busy training,<br>or get busy<br><span class="hl">guessing.</span></h1>
+    <p class="hero-lede">The working manual for PulseGym's API: how members log workouts and read their own numbers, how admins run the roster, and which screen on the frontend calls which endpoint. Built from the live Postman collection — nothing here is invented.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span class="n">37</span><span class="l">Logged requests</span></div>
+      <div class="hero-meta-item"><span class="n">16</span><span class="l">Distinct endpoints</span></div>
+      <div class="hero-meta-item"><span class="n">2</span><span class="l">Actor roles</span></div>
+      <div class="hero-meta-item"><span class="n">3</span><span class="l">Data stores</span></div>
+    </div>
+  </div>
+</section>
+
+<nav class="console-tabs shell" id="tabs">
+  <button class="ctab active" data-view="setup"><span class="tag"></span>Setup</button>
+  <button class="ctab" data-view="member"><span class="tag" style="color:var(--cool)"></span>Member Console</button>
+  <button class="ctab" data-view="admin"><span class="tag" style="color:var(--violet)"></span>Admin Console</button>
+  <button class="ctab" data-view="frontend"><span class="tag" style="color:var(--amber)"></span>Frontend Map</button>
+  <button class="ctab" data-view="live"><span class="tag" style="color:var(--heat)"></span>Live Samples</button>
+</nav>
+
+<!-- ============================================================ -->
+<!-- VIEW: SETUP                                                    -->
+<!-- ============================================================ -->
+<main class="view active" id="view-setup">
+  <div class="shell">
+
+    <div class="sec" id="setup-launch">
+      <div class="sec-head"><span class="sec-num">01</span><h2>Launch the stack</h2></div>
+      <p class="sec-intro">Three data services back this API before it will boot. Get each one live first, then bring the server up.</p>
+      <ol class="steps">
+        <li><strong>Redis Cloud</strong> — used for caching. Confirm the instance is reachable and the connection string is in <code>.env</code>.</li>
+        <li><strong>Supabase (PostgreSQL)</strong> — holds the <code>members</code> table plus auth. Run migrations against it before seeding.</li>
+        <li><strong>MongoDB Atlas</strong> — holds the <code>workouts</code> collection. No schema migration needed, just a reachable connection string.</li>
+        <li>Copy <code>.env.example</code> to <code>.env</code> and fill in all three connection strings, then seed and start the server.</li>
+      </ol>
+      <div class="command"><button class="copy-btn" data-copy="npm run migrate&#10;npm run seed&#10;npm run dev">Copy</button>npm run migrate
+npm run seed
+npm run dev</div>
+    </div>
+
+    <div class="sec" id="setup-stores">
+      <div class="sec-head"><span class="sec-num">02</span><h2>Where the data lives</h2></div>
+      <p class="sec-intro">Three stores, three jobs. Nothing about a member's identity lives next to their workout history — the API is the only thing that joins them.</p>
+      <div class="db-grid">
+        <div class="db-card" style="color:var(--cool)">
+          <div class="db-icon">PG</div>
+          <h4>Supabase</h4>
+          <span class="role" style="color:var(--cool)">PostgreSQL + Auth</span>
+          <p>System of record for the <code>members</code> table and for authentication — registration, login sessions, and the admin account.</p>
+          <ul>
+            <li><code>id, full_name, email, phone</code></li>
+            <li><code>subscription_plan, subscription_status</code></li>
+            <li><code>allowed_workout_days</code></li>
+          </ul>
+        </div>
+        <div class="db-card" style="color:var(--volt)">
+          <div class="db-icon">MG</div>
+          <h4>MongoDB Atlas</h4>
+          <span class="role" style="color:var(--volt)">Workouts collection</span>
+          <p>Every workout a member starts, stops, and leaves feedback on. Read back for history, the dashboard chart, and admin reports.</p>
+          <ul>
+            <li><code>memberId, workoutType</code></li>
+            <li><code>startTimestamp, endTimestamp, duration</code></li>
+            <li><code>calories, feedback</code></li>
+          </ul>
+        </div>
+        <div class="db-card" style="color:var(--heat)">
+          <div class="db-icon">RD</div>
+          <h4>Redis Cloud</h4>
+          <span class="role" style="color:var(--heat)">Caching layer</span>
+          <p>Sits in front of the heavier reads — dashboards, statistics, member lists — so repeat requests don't refetch from Postgres or Mongo.</p>
+          <ul>
+            <li>No test cases below hit it directly</li>
+            <li>Invalidate on write, verify on repeat <code>GET</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec" id="setup-accounts">
+      <div class="sec-head"><span class="sec-num">03</span><h2>Seeded accounts</h2></div>
+      <p class="sec-intro">Two starting points: a member with real workout history, and the one admin account. Use Hassan for anything member-facing — his history is what the dashboard numbers below are built from.</p>
+      <div class="cred-grid">
+        <div class="cred-cell"><span class="cred-label">Member — Hassan Brown</span><code>hassan.brown010@pulsegym.com</code></div>
+        <div class="cred-cell"><span class="cred-label">Password</span><code>password12345</code></div>
+        <div class="cred-cell"><span class="cred-label">Plan</span><code>premium / active</code></div>
+      </div>
+      <div style="height:1px"></div>
+      <div class="cred-grid" style="margin-top:14px">
+        <div class="cred-cell"><span class="cred-label">Admin</span><code>admin@gym.com</code></div>
+        <div class="cred-cell"><span class="cred-label">Password</span><code>admin123456</code></div>
+        <div class="cred-cell"><span class="cred-label">Scope</span><code>full roster + reports</code></div>
+      </div>
+      <div class="callout"><strong>Start here.</strong> Hassan already has 107 logged workouts, so <code>GET /api/dashboard/</code> and <code>GET /api/workouts/history</code> return real numbers immediately after login — no need to generate data first.</div>
+    </div>
+
+    <div class="sec" id="setup-postman">
+      <div class="sec-head"><span class="sec-num">04</span><h2>Configure Postman</h2></div>
+      <p class="sec-intro">Sessions are cookie-based, same as the login flow itself.</p>
+      <ol class="steps">
+        <li>Use Postman desktop with cookie handling enabled — logging in as either a member or the admin sets an HTTP-only session cookie automatically.</li>
+        <li>Member and admin sessions don't mix. Log out (or use a second cookie jar) before switching roles.</li>
+        <li>After starting a workout, copy its returned <code>id</code> to stop it or attach feedback — both routes take the workout id in the URL path.</li>
+      </ol>
+      <div class="command"><button class="copy-btn" data-copy='{"email":"hassan.brown010@pulsegym.com","password":"password12345"}'>Copy</button>{"email": "hassan.brown010@pulsegym.com", "password": "password12345"}</div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ============================================================ -->
+<!-- VIEW: MEMBER CONSOLE (checklist)                               -->
+<!-- ============================================================ -->
+<main class="view" id="view-member">
+  <div class="shell">
+    <div class="sec">
+      <div class="sec-head"><span class="sec-num" style="color:var(--cool)">MEMBER</span><h2>What a member can do</h2></div>
+      <p class="sec-intro">Everything below runs under a member's own session. Check items off as you verify them — throwaway registrations only for the delete-adjacent flows.</p>
+
+      <h3 class="cat-heading" style="font-size:16px;margin-top:0"><span style="color:var(--cool)">Authentication</span><span class="dash"></span></h3>
+      <div class="ep-grid">
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span><input class="chk" type="checkbox" aria-label="Register tested"></div><code class="ep-path">localhost:3000/api/auth/register</code><p>Body: <code>fullName, email, password</code>. Password needs 6–255 characters. Expect <strong>201</strong>.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span><input class="chk" type="checkbox" aria-label="Login tested"></div><code class="ep-path">localhost:3000/api/auth/login</code><p>Body: <code>email, password</code>. Sets the session cookie. Expect <strong>200</strong> with the member object.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span><input class="chk" type="checkbox" aria-label="Refresh tested"></div><code class="ep-path">localhost:3000/api/auth/refresh</code><p>No body. Refreshes the session token. Fails with <strong>401</strong> once logged out.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span><input class="chk" type="checkbox" aria-label="Logout tested"></div><code class="ep-path">localhost:3000/api/auth/logout</code><p>No body. Run last in any test pass. Expect <strong>200</strong>.</p></div>
+      </div>
+
+      <h3 class="cat-heading"><span style="color:var(--cool)">Profile & subscription</span><span class="dash"></span></h3>
+      <div class="ep-grid">
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="Profile tested"></div><code class="ep-path">localhost:3000/api/members/me</code><p>The logged-in member's own record — plan, status, allowed workout days.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="Subscription tested"></div><code class="ep-path">localhost:3000/api/members/me/subscription</code><p>Just the plan + status pair, for a lighter read than the full profile.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="Workout days tested"></div><code class="ep-path">localhost:3000/api/members/me/workout-days</code><p>Which days this member's plan allows them to train. Requires a session — <strong>401</strong> without one.</p></div>
+      </div>
+
+      <h3 class="cat-heading"><span style="color:var(--cool)">Workouts</span><span class="dash"></span></h3>
+      <div class="ep-grid">
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span><input class="chk" type="checkbox" aria-label="Start workout tested"></div><code class="ep-path">localhost:3000/api/workouts/start</code><p>Body: <code>{"workoutType": "yoga"}</code>. Type must be one of the seven allowed values. Save the returned <code>id</code>.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span><input class="chk" type="checkbox" aria-label="Stop workout tested"></div><code class="ep-path">localhost:3000/api/workouts/{id}/stop</code><p>Body: <code>{"calories": 250}</code>. Closes out the workout with an end timestamp and duration.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-patch">PATCH</span><input class="chk" type="checkbox" aria-label="Feedback tested"></div><code class="ep-path">localhost:3000/api/workouts/{id}/feedback</code><p>Body: <code>{"feedback": "..."}</code>. Attach a note to a completed workout.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="History tested"></div><code class="ep-path">localhost:3000/api/workouts/history?page=1&limit=10</code><p>Paginated. Add <code>&workoutType=cardio</code> to filter by type.</p></div>
+      </div>
+
+      <h3 class="cat-heading"><span style="color:var(--cool)">Dashboard</span><span class="dash"></span></h3>
+      <div class="ep-grid">
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="Dashboard tested"></div><code class="ep-path">localhost:3000/api/dashboard/</code><p>Totals, averages, most/least active day, and two chart-ready series (<code>byDay</code>, <code>byType</code>) — this is what the frontend chart binds to directly.</p></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============================================================ -->
+<!-- VIEW: ADMIN CONSOLE (checklist)                                -->
+<!-- ============================================================ -->
+<main class="view" id="view-admin">
+  <div class="shell">
+    <div class="sec">
+      <div class="sec-head"><span class="sec-num" style="color:var(--violet)">ADMIN</span><h2>What the admin can do</h2></div>
+      <p class="sec-intro">A separate login, a separate session, and a wider blast radius — deletion and subscription changes live here. Test destructive calls against throwaway members only.</p>
+
+      <h3 class="cat-heading" style="margin-top:0"><span style="color:var(--violet)">Session</span><span class="dash"></span></h3>
+      <div class="ep-grid">
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span><input class="chk" type="checkbox" aria-label="Admin login tested"></div><code class="ep-path">localhost:3000/api/admin/login</code><p>Body: <code>email, password</code>. Separate cookie from a member session — one admin account seeded.</p></div>
+      </div>
+
+      <h3 class="cat-heading"><span style="color:var(--violet)">Roster management</span><span class="dash"></span></h3>
+      <div class="ep-grid">
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="Members list tested"></div><code class="ep-path">localhost:3000/api/admin/members?page=1&limit=10</code><p>Paginated roster of every member. 252+ seeded members to page through.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span><input class="chk" type="checkbox" aria-label="Create member tested"></div><code class="ep-path">localhost:3000/api/admin/members</code><p>Body: <code>fullName, email, subscriptionPlan, password</code>, optional <code>phone</code>. Duplicate email → <strong>409</strong>, bad phone → <strong>400</strong>.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-put">PUT</span><input class="chk" type="checkbox" aria-label="Update member tested"></div><code class="ep-path">localhost:3000/api/admin/members/{id}</code><p>Partial update — e.g. <code>{"fullName": "..."}</code>. Returns the full updated record.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-patch">PATCH</span><input class="chk" type="checkbox" aria-label="Subscription change tested"></div><code class="ep-path">localhost:3000/api/admin/members/{id}/subscription</code><p>Body: <code>{"subscriptionPlan": "premium"}</code>. Changing plan also widens <code>allowed_workout_days</code>.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-delete">DELETE</span><input class="chk" type="checkbox" aria-label="Delete member tested"></div><code class="ep-path">localhost:3000/api/admin/members/{id}</code><p>Throwaway member only — this cannot be undone. Expect <strong>200</strong>.</p></div>
+      </div>
+
+      <h3 class="cat-heading"><span style="color:var(--violet)">Member insight</span><span class="dash"></span></h3>
+      <div class="ep-grid">
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="Member workouts tested"></div><code class="ep-path">localhost:3000/api/admin/members/{id}/workouts</code><p>Any member's paginated workout history, viewed as the admin — includes the member record inline.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="Statistics tested"></div><code class="ep-path">localhost:3000/api/admin/statistics</code><p>Gym-wide totals: member count, active subscriptions, total workouts and calories, most popular type.</p></div>
+      </div>
+
+      <h3 class="cat-heading"><span style="color:var(--violet)">Reports</span><span class="dash"></span></h3>
+      <div class="ep-grid">
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="JSON report tested"></div><code class="ep-path">localhost:3000/api/reports/{memberId}</code><p>Full member report as JSON — profile, complete workout list, and rolled-up stats in one payload.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="QR report tested"></div><code class="ep-path">localhost:3000/api/reports/{memberId}/qr</code><p>Returns a base64 PNG QR code, most likely encoding a link to that member's printable report.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="HTML report tested"></div><code class="ep-path">localhost:3000/api/reports/{memberId}/print</code><p>A complete standalone dark-mode HTML page — open it directly in a browser or hand it to a printer.</p></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============================================================ -->
+<!-- VIEW: FRONTEND MAP                                             -->
+<!-- ============================================================ -->
+<main class="view" id="view-frontend">
+  <div class="shell">
+    <div class="sec">
+      <div class="sec-head"><span class="sec-num" style="color:var(--amber)">MAP</span><h2>Screen &rarr; endpoint map</h2></div>
+      <p class="sec-intro">For the frontend team: every screen you'll build and the exact endpoints it needs to call. Auth requirement is marked on each — <span style="color:var(--dimmer)">public</span>, <span style="color:var(--cool)">member session</span>, or <span style="color:var(--violet)">admin session</span>.</p>
+      <div class="legend">
+        <div class="legend-item"><span class="sw" style="color:var(--dimmer)"></span>Public — no session needed</div>
+        <div class="legend-item"><span class="sw" style="color:var(--cool)"></span>Member session required</div>
+        <div class="legend-item"><span class="sw" style="color:var(--violet)"></span>Admin session required</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3 class="cat-heading" style="margin-top:0">Authentication page<span class="dash"></span></h3>
+      <p class="sec-intro" style="margin-top:-6px">Registration and login for members. This is the only page a signed-out visitor can reach.</p>
+      <div class="ep-grid">
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span></div><code class="ep-path">localhost:3000/api/auth/register<span class="auth-badge auth-public">public</span></code><p>Sign-up form: full name, email, password. On <strong>409</strong> show "email already registered"; on <strong>400</strong> surface the specific validation message.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span></div><code class="ep-path">localhost:3000/api/auth/login<span class="auth-badge auth-public">public</span></code><p>Login form. On success, redirect into the member area — the session cookie is set automatically by the response.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span></div><code class="ep-path">localhost:3000/api/auth/refresh<span class="auth-badge auth-member">member</span></code><p>Call silently in the background to keep a long session alive; no UI needed for this one.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span></div><code class="ep-path">localhost:3000/api/auth/logout<span class="auth-badge auth-member">member</span></code><p>Wire to the logout button. Clear local state and route back to this page after.</p></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3 class="cat-heading">Member home / profile page<span class="dash"></span></h3>
+      <p class="sec-intro" style="margin-top:-6px">The landing screen right after login — who they are and what plan they're on.</p>
+      <div class="ep-grid">
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/members/me<span class="auth-badge auth-member">member</span></code><p>Name, phone, plan, status, and allowed workout days — the source for a profile header or card.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/members/me/subscription<span class="auth-badge auth-member">member</span></code><p>Use this for a lightweight plan badge anywhere it needs to show without loading the full profile.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/members/me/workout-days<span class="auth-badge auth-member">member</span></code><p>Feed this into a weekly calendar widget to grey out days this plan doesn't cover.</p></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3 class="cat-heading">Workout tracker page<span class="dash"></span></h3>
+      <p class="sec-intro" style="margin-top:-6px">The core loop: start a session, stop it, optionally leave feedback, then browse history.</p>
+      <div class="ep-grid">
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span></div><code class="ep-path">localhost:3000/api/workouts/start<span class="auth-badge auth-member">member</span></code><p>"Start workout" button, with a type picker limited to the seven valid values. Hold the returned <code>id</code> in state.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span></div><code class="ep-path">localhost:3000/api/workouts/{id}/stop<span class="auth-badge auth-member">member</span></code><p>"Stop workout" button. Ask for a calorie estimate, or compute one client-side and send it.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-patch">PATCH</span></div><code class="ep-path">localhost:3000/api/workouts/{id}/feedback<span class="auth-badge auth-member">member</span></code><p>Optional post-workout note field, shown right after a session ends.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/workouts/history<span class="auth-badge auth-member">member</span></code><p>The history list. Supports <code>page</code>, <code>limit</code>, and an optional <code>workoutType</code> filter tab.</p></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3 class="cat-heading">Progress dashboard page<span class="dash"></span></h3>
+      <p class="sec-intro" style="margin-top:-6px">One call, one screen — every number and both chart series come back together.</p>
+      <div class="ep-grid" style="grid-template-columns:1fr">
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/dashboard/<span class="auth-badge auth-member">member</span></code><p>Bind <code>totalWorkouts</code>, <code>totalCalories</code>, <code>averageDuration</code>, and <code>mostActiveDay</code>/<code>leastActiveDay</code> to summary stat tiles. Bind <code>chart.byDay</code> to a weekly bar chart and <code>chart.byType</code> to a breakdown chart (pie or bar) — both arrive as parallel <code>labels</code>/<code>values</code> arrays, ready for most charting libraries with no reshaping.</p></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3 class="cat-heading">Admin login page<span class="dash"></span></h3>
+      <p class="sec-intro" style="margin-top:-6px">A separate entry point from member login — don't reuse the member auth form.</p>
+      <div class="ep-grid" style="grid-template-columns:1fr">
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span></div><code class="ep-path">localhost:3000/api/admin/login<span class="auth-badge auth-public">public</span></code><p>Admin-only credentials, no self-registration flow exists for this role — there's one seeded account.</p></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3 class="cat-heading">Admin roster page<span class="dash"></span></h3>
+      <p class="sec-intro" style="margin-top:-6px">The member table admins live in day to day — list, add, edit, change plan, remove.</p>
+      <div class="ep-grid">
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/admin/members<span class="auth-badge auth-admin">admin</span></code><p>Paginated table view. Build page controls around the response's <code>total</code>, <code>page</code>, <code>limit</code>.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-post">POST</span></div><code class="ep-path">localhost:3000/api/admin/members<span class="auth-badge auth-admin">admin</span></code><p>"Add member" form/modal. Validate phone format client-side too — the API rejects malformed numbers with <strong>400</strong>.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-put">PUT</span></div><code class="ep-path">localhost:3000/api/admin/members/{id}<span class="auth-badge auth-admin">admin</span></code><p>Inline edit or an edit-member modal for name/phone/other fields.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-patch">PATCH</span></div><code class="ep-path">localhost:3000/api/admin/members/{id}/subscription<span class="auth-badge auth-admin">admin</span></code><p>A dedicated plan-change control — keep it separate from the general edit form since it also affects workout-day access.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-delete">DELETE</span></div><code class="ep-path">localhost:3000/api/admin/members/{id}<span class="auth-badge auth-admin">admin</span></code><p>Gate this behind a confirmation dialog — it's a hard delete with no undo.</p></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3 class="cat-heading">Admin member detail page<span class="dash"></span></h3>
+      <p class="sec-intro" style="margin-top:-6px">Drill into one member from the roster — their workout log and downloadable reports.</p>
+      <div class="ep-grid">
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/admin/members/{id}/workouts<span class="auth-badge auth-admin">admin</span></code><p>This member's paginated workout log, viewed by the admin.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/reports/{id}<span class="auth-badge auth-admin">admin</span></code><p>Backs an on-page report summary — profile, full workout list, and stats in one JSON payload.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/reports/{id}/qr<span class="auth-badge auth-admin">admin</span></code><p>Render the returned base64 string directly in an <code>&lt;img src="data:image/png;base64,..."&gt;</code>.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/reports/{id}/print<span class="auth-badge auth-admin">admin</span></code><p>Wire to a "print report" button — open the returned HTML in a new tab and let the browser's print dialog handle it.</p></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3 class="cat-heading">Admin overview page<span class="dash"></span></h3>
+      <p class="sec-intro" style="margin-top:-6px">Gym-wide numbers, separate from any one member's dashboard.</p>
+      <div class="ep-grid" style="grid-template-columns:1fr">
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/admin/statistics<span class="auth-badge auth-admin">admin</span></code><p>One call for the whole overview screen: total members, active subscriptions, total workouts and calories gym-wide, and the most popular workout type.</p></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============================================================ -->
+<!-- VIEW: LIVE SAMPLES                                             -->
+<!-- ============================================================ -->
+<main class="view" id="view-live">
+  <div class="shell">
+    <div class="sec" style="margin-bottom:38px">
+      <div class="sec-head"><span class="sec-num" style="color:var(--heat)">LOG</span><h2>Live request log</h2></div>
+      <p class="sec-intro">Real request/response pairs pulled straight from the Postman run — success cases and the validation errors worth knowing about ahead of time. Long arrays are trimmed to a couple of entries for readability; the actual responses page further with <code>page</code>/<code>limit</code>.</p>
+      <div class="legend">
+        <div class="legend-item"><span class="status-chip st-2" style="padding:1px 5px">2xx</span>expected success</div>
+        <div class="legend-item"><span class="status-chip st-4" style="padding:1px 5px">4xx</span>expected client error</div>
+      </div>
+    </div>
+
+    <!-- ===== AUTHENTICATION ===== -->
+    <h2 class="cat-heading"><span style="color:var(--cool)">Authentication</span><span class="dash"></span></h2>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">register — new member</span><span class="sample-url">/api/auth/register</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "fullName": "Mo'men Tamer",
+  "email": "moamen@yahoo.com",
+  "password": "password12345"
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">201 Created</span></div>
+      <div class="sample-code">{
+  <span class="k">"success"</span>: <span class="b">true</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">register — duplicate email</span><span class="sample-url">/api/auth/register</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "fullName": "Mo'men Mosa",
+  "email": "moamen@gmail.com",
+  "password": "password12345"
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-4">409 Conflict</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"Email is already registered."</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">register — weak password</span><span class="sample-url">/api/auth/register</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "fullName": "theFake",
+  "email": "fake@gmail.com",
+  "password": "pass"
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-4">400 Bad Request</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"password must be 6-255 characters"</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">register — invalid email</span><span class="sample-url">/api/auth/register</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "fullName": "theFake",
+  "email": "fake",
+  "password": "password12345"
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-4">400 Bad Request</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"invalid email address"</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">login — Hassan (member)</span><span class="sample-url">/api/auth/login</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "email": "hassan.brown010@pulsegym.com",
+  "password": "password12345"
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"Login successful."</span>,
+  <span class="k">"user"</span>: {
+    <span class="k">"id"</span>: <span class="s">"ad2a5642-4deb-4b14-8484-e5153dd5dc5c"</span>,
+    <span class="k">"fullName"</span>: <span class="s">"Hassan Brown"</span>,
+    <span class="k">"email"</span>: <span class="s">"hassan.brown010@pulsegym.com"</span>,
+    <span class="k">"subscriptionPlan"</span>: <span class="s">"premium"</span>,
+    <span class="k">"subscriptionStatus"</span>: <span class="s">"active"</span>
+  }
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">login — wrong password</span><span class="sample-url">/api/auth/login</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "email": "hassan.brown010@pulsegym.com",
+  "password": "password"
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-4">401 Unauthorized</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"Invalid email or password."</span>
+}</div>
+      <div class="sample-note">Same message for an unknown email — the API doesn't reveal which part was wrong.</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">refresh — active session</span><span class="sample-url">/api/auth/refresh</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"token has been refreshed"</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">refresh — after logout</span><span class="sample-url">/api/auth/refresh</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-4">401 Unauthorized</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"Refresh token required."</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">logout</span><span class="sample-url">/api/auth/logout</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"Logout successful."</span>
+}</div>
+    </div>
+
+    <!-- ===== MEMBER PROFILE ===== -->
+    <h2 class="cat-heading"><span style="color:var(--cool)">Member profile</span><span class="dash"></span></h2>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-get">GET</span><span class="sample-name">my profile — Hassan</span><span class="sample-url">/api/members/me</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"member"</span>: {
+    <span class="k">"id"</span>: <span class="s">"ad2a5642-4deb-4b14-8484-e5153dd5dc5c"</span>,
+    <span class="k">"full_name"</span>: <span class="s">"Hassan Brown"</span>,
+    <span class="k">"email"</span>: <span class="s">"hassan.brown010@pulsegym.com"</span>,
+    <span class="k">"phone"</span>: <span class="s">"01504404152"</span>,
+    <span class="k">"subscription_plan"</span>: <span class="s">"premium"</span>,
+    <span class="k">"subscription_status"</span>: <span class="s">"active"</span>,
+    <span class="k">"allowed_workout_days"</span>: [<span class="s">"monday"</span>, <span class="s">"tuesday"</span>, <span class="s">"wednesday"</span>, <span class="s">"thursday"</span>, <span class="s">"friday"</span>, <span class="s">"saturday"</span>, <span class="s">"sunday"</span>],
+    <span class="k">"created_at"</span>: <span class="s">"2025-12-30T01:24:19.495+00:00"</span>,
+    <span class="k">"updated_at"</span>: <span class="s">"2026-09-02T20:59:58.689+00:00"</span>
+  }
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-get">GET</span><span class="sample-name">my subscription</span><span class="sample-url">/api/members/me/subscription</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"subscriptionPlan"</span>: <span class="s">"premium"</span>,
+  <span class="k">"subscriptionStatus"</span>: <span class="s">"active"</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-get">GET</span><span class="sample-name">allowed workout days</span><span class="sample-url">/api/members/me/workout-days</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"allowedWorkoutDays"</span>: [<span class="s">"monday"</span>, <span class="s">"tuesday"</span>, <span class="s">"wednesday"</span>, <span class="s">"thursday"</span>, <span class="s">"friday"</span>, <span class="s">"saturday"</span>, <span class="s">"sunday"</span>]
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-get">GET</span><span class="sample-name">workout days — no session</span><span class="sample-url">/api/members/me/workout-days</span></div>
+      <div class="sample-empty">No request body, no session cookie sent</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-4">401 Unauthorized</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"access denied, please log in first"</span>
+}</div>
+    </div>
+
+    <!-- ===== WORKOUTS ===== -->
+    <h2 class="cat-heading"><span style="color:var(--cool)">Workouts</span><span class="dash"></span></h2>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">start workout — yoga</span><span class="sample-url">/api/workouts/start</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "workoutType": "yoga"
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">201 Created</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"Workout started."</span>,
+  <span class="k">"workout"</span>: {
+    <span class="k">"id"</span>: <span class="s">"6a99b26312be6ece16879c15"</span>,
+    <span class="k">"memberId"</span>: <span class="s">"ad2a5642-4deb-4b14-8484-e5153dd5dc5c"</span>,
+    <span class="k">"startTimestamp"</span>: <span class="s">"2026-09-03T17:46:11.181Z"</span>,
+    <span class="k">"workoutType"</span>: <span class="s">"yoga"</span>
+  }
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">stop workout</span><span class="sample-url">/api/workouts/6a99b263.../stop</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "calories": 250
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"Workout stopped."</span>,
+  <span class="k">"workout"</span>: {
+    <span class="k">"id"</span>: <span class="s">"6a99b26312be6ece16879c15"</span>,
+    <span class="k">"memberId"</span>: <span class="s">"ad2a5642-4deb-4b14-8484-e5153dd5dc5c"</span>,
+    <span class="k">"startTimestamp"</span>: <span class="s">"2026-09-03T17:46:11.181Z"</span>,
+    <span class="k">"endTimestamp"</span>: <span class="s">"2026-09-03T18:20:01.651Z"</span>,
+    <span class="k">"duration"</span>: <span class="n">2030</span>,
+    <span class="k">"workoutType"</span>: <span class="s">"yoga"</span>,
+    <span class="k">"calories"</span>: <span class="n">250</span>
+  }
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-patch">PATCH</span><span class="sample-name">submit feedback</span><span class="sample-url">/api/workouts/6a99b263.../feedback</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "feedback": "Really relaxing session. The pace was good and the exercises were easy to follow."
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"Feedback submitted."</span>,
+  <span class="k">"workout"</span>: {
+    <span class="k">"id"</span>: <span class="s">"6a99b26312be6ece16879c15"</span>,
+    <span class="k">"feedback"</span>: <span class="s">"Really relaxing session. The pace was good and the exercises were easy to follow."</span>
+  }
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">start workout — invalid type</span><span class="sample-url">/api/workouts/start</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "workoutType": "swimming"
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-4">400 Bad Request</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"workout type must be strength, cardio, flexibility, hiit, crossfit, yoga, or other"</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-get">GET</span><span class="sample-name">workout history — page 2</span><span class="sample-url">/api/workouts/history?page=2&amp;limit=15</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"workouts"</span>: [
+    {
+      <span class="k">"_id"</span>: <span class="s">"6a988e510f3e674f31b02f16"</span>,
+      <span class="k">"memberId"</span>: <span class="s">"ad2a5642-4deb-4b14-8484-e5153dd5dc5c"</span>,
+      <span class="k">"startTimestamp"</span>: <span class="s">"2026-08-02T16:34:00.000Z"</span>,
+      <span class="k">"endTimestamp"</span>: <span class="s">"2026-08-02T17:20:00.000Z"</span>,
+      <span class="k">"duration"</span>: <span class="n">2760</span>,
+      <span class="k">"workoutType"</span>: <span class="s">"cardio"</span>,
+      <span class="k">"calories"</span>: <span class="n">516</span>,
+      <span class="k">"feedback"</span>: <span class="z">null</span>,
+      <span class="k">"createdAt"</span>: <span class="s">"2026-08-02T16:34:00.000Z"</span>
+    }
+    <span class="z">// ...14 more on this page</span>
+  ],
+  <span class="k">"total"</span>: <span class="n">107</span>,
+  <span class="k">"page"</span>: <span class="n">2</span>,
+  <span class="k">"limit"</span>: <span class="n">15</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-get">GET</span><span class="sample-name">workout history — filtered to cardio</span><span class="sample-url">/api/workouts/history?workoutType=cardio</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"workouts"</span>: [
+    {
+      <span class="k">"_id"</span>: <span class="s">"6a988e510f3e674f31b02f23"</span>,
+      <span class="k">"memberId"</span>: <span class="s">"ad2a5642-4deb-4b14-8484-e5153dd5dc5c"</span>,
+      <span class="k">"startTimestamp"</span>: <span class="s">"2026-08-30T13:15:00.000Z"</span>,
+      <span class="k">"endTimestamp"</span>: <span class="s">"2026-08-30T14:30:00.000Z"</span>,
+      <span class="k">"duration"</span>: <span class="n">4500</span>,
+      <span class="k">"workoutType"</span>: <span class="s">"cardio"</span>,
+      <span class="k">"calories"</span>: <span class="n">734</span>,
+      <span class="k">"feedback"</span>: <span class="s">"Beating my personal record on deadlifts soon!"</span>,
+      <span class="k">"createdAt"</span>: <span class="s">"2026-08-30T13:15:00.000Z"</span>
+    }
+    <span class="z">// ...more cardio entries</span>
+  ]
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-get">GET</span><span class="sample-name">workout history — empty (new member)</span><span class="sample-url">/api/workouts/history?page=1&amp;limit=10</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"workouts"</span>: [],
+  <span class="k">"total"</span>: <span class="n">0</span>,
+  <span class="k">"page"</span>: <span class="n">1</span>,
+  <span class="k">"limit"</span>: <span class="n">10</span>
+}</div>
+      <div class="sample-note">Good state to design an empty-history screen against.</div>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <h2 class="cat-heading"><span style="color:var(--cool)">Dashboard</span><span class="dash"></span></h2>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-get">GET</span><span class="sample-name">dashboard — Hassan</span><span class="sample-url">/api/dashboard/</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"totalWorkouts"</span>: <span class="n">107</span>,
+  <span class="k">"totalCalories"</span>: <span class="n">51480</span>,
+  <span class="k">"averageDuration"</span>: <span class="n">3744.58</span>,
+  <span class="k">"mostActiveDay"</span>: <span class="s">"wednesday"</span>,
+  <span class="k">"leastActiveDay"</span>: <span class="s">"sunday"</span>,
+  <span class="k">"chart"</span>: {
+    <span class="k">"byDay"</span>: {
+      <span class="k">"labels"</span>: [<span class="s">"sunday"</span>, <span class="s">"monday"</span>, <span class="s">"tuesday"</span>, <span class="s">"wednesday"</span>, <span class="s">"thursday"</span>, <span class="s">"friday"</span>, <span class="s">"saturday"</span>],
+      <span class="k">"values"</span>: [<span class="n">13</span>, <span class="n">13</span>, <span class="n">16</span>, <span class="n">20</span>, <span class="n">17</span>, <span class="n">14</span>, <span class="n">14</span>]
+    },
+    <span class="k">"byType"</span>: {
+      <span class="k">"labels"</span>: [<span class="s">"strength"</span>, <span class="s">"cardio"</span>, <span class="s">"yoga"</span>, <span class="s">"hiit"</span>, <span class="s">"flexibility"</span>, <span class="s">"crossfit"</span>, <span class="s">"other"</span>],
+      <span class="k">"values"</span>: [<span class="n">32</span>, <span class="n">28</span>, <span class="n">17</span>, <span class="n">14</span>, <span class="n">7</span>, <span class="n">6</span>, <span class="n">3</span>]
+    }
+  }
+}</div>
+      <div class="sample-note">Both chart series are parallel arrays — <code>labels[i]</code> pairs with <code>values[i]</code>, ready for direct binding.</div>
+    </div>
+
+    <!-- ===== ADMIN — SESSION & ROSTER ===== -->
+    <h2 class="cat-heading"><span style="color:var(--violet)">Admin — session &amp; roster</span><span class="dash"></span></h2>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">admin login</span><span class="sample-url">/api/admin/login</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "email": "admin@gym.com",
+  "password": "admin123456"
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"Admin login successful."</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-get">GET</span><span class="sample-name">fetch members — page 2</span><span class="sample-url">/api/admin/members?page=2&amp;limit=5</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"members"</span>: [
+    {
+      <span class="k">"id"</span>: <span class="s">"a4aca120-98d8-4fe4-83eb-f90eb39d108c"</span>,
+      <span class="k">"full_name"</span>: <span class="s">"Malik Fathy"</span>,
+      <span class="k">"email"</span>: <span class="s">"malik.fathy150@pulsegym.com"</span>,
+      <span class="k">"phone"</span>: <span class="s">"01098042982"</span>,
+      <span class="k">"subscription_plan"</span>: <span class="s">"basic"</span>,
+      <span class="k">"subscription_status"</span>: <span class="s">"active"</span>,
+      <span class="k">"allowed_workout_days"</span>: [<span class="s">"monday"</span>, <span class="s">"wednesday"</span>, <span class="s">"friday"</span>]
+    }
+    <span class="z">// ...4 more on this page</span>
+  ],
+  <span class="k">"total"</span>: <span class="n">252</span>,
+  <span class="k">"page"</span>: <span class="n">2</span>,
+  <span class="k">"limit"</span>: <span class="n">5</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">create member</span><span class="sample-url">/api/admin/members</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "fullName": "faker",
+  "email": "fake@github.com",
+  "subscriptionPlan": "standard",
+  "password": "password12345"
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">201 Created</span></div>
+      <div class="sample-code">{
+  <span class="k">"member"</span>: {
+    <span class="k">"id"</span>: <span class="s">"64d8e9dd-42d4-4ddd-91cc-a48b7fcebafc"</span>,
+    <span class="k">"full_name"</span>: <span class="s">"faker"</span>,
+    <span class="k">"email"</span>: <span class="s">"fake@github.com"</span>,
+    <span class="k">"phone"</span>: <span class="z">null</span>,
+    <span class="k">"subscription_plan"</span>: <span class="s">"standard"</span>,
+    <span class="k">"subscription_status"</span>: <span class="s">"active"</span>,
+    <span class="k">"allowed_workout_days"</span>: [<span class="s">"monday"</span>, <span class="s">"tuesday"</span>, <span class="s">"wednesday"</span>, <span class="s">"thursday"</span>, <span class="s">"friday"</span>]
+  }
+}</div>
+      <div class="sample-note"><code>phone</code> is optional on create. <code>allowed_workout_days</code> defaults from the chosen plan.</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">create member — duplicate email</span><span class="sample-url">/api/admin/members</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "fullName": "another faker",
+  "email": "fake@github.com",
+  "subscriptionPlan": "standard",
+  "password": "password12345"
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-4">409 Conflict</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"Email is already registered."</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-post">POST</span><span class="sample-name">create member — invalid phone</span><span class="sample-url">/api/admin/members</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "fullName": "another faker",
+  "email": "fake@fake.com",
+  "subscriptionPlan": "standard",
+  "phone": "pizza",
+  "password": "password12345"
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-4">400 Bad Request</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"invalid phone number"</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-put">PUT</span><span class="sample-name">update member</span><span class="sample-url">/api/admin/members/64d8e9dd...</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "fullName": "theFakeHimself"
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"member"</span>: {
+    <span class="k">"id"</span>: <span class="s">"64d8e9dd-42d4-4ddd-91cc-a48b7fcebafc"</span>,
+    <span class="k">"full_name"</span>: <span class="s">"theFakeHimself"</span>,
+    <span class="k">"email"</span>: <span class="s">"fake@github.com"</span>,
+    <span class="k">"phone"</span>: <span class="z">null</span>,
+    <span class="k">"subscription_plan"</span>: <span class="s">"standard"</span>,
+    <span class="k">"subscription_status"</span>: <span class="s">"active"</span>,
+    <span class="k">"allowed_workout_days"</span>: [<span class="s">"monday"</span>, <span class="s">"tuesday"</span>, <span class="s">"wednesday"</span>, <span class="s">"thursday"</span>, <span class="s">"friday"</span>]
+  }
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-patch">PATCH</span><span class="sample-name">change subscription</span><span class="sample-url">/api/admin/members/64d8e9dd.../subscription</span></div>
+      <div class="sample-label">Request body</div>
+      <div class="sample-code">{
+  "subscriptionPlan": "premium"
+}</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"member"</span>: {
+    <span class="k">"id"</span>: <span class="s">"64d8e9dd-42d4-4ddd-91cc-a48b7fcebafc"</span>,
+    <span class="k">"full_name"</span>: <span class="s">"theFakeHimself"</span>,
+    <span class="k">"subscription_plan"</span>: <span class="s">"premium"</span>,
+    <span class="k">"subscription_status"</span>: <span class="s">"active"</span>,
+    <span class="k">"allowed_workout_days"</span>: [<span class="s">"monday"</span>, <span class="s">"tuesday"</span>, <span class="s">"wednesday"</span>, <span class="s">"thursday"</span>, <span class="s">"friday"</span>, <span class="s">"saturday"</span>, <span class="s">"sunday"</span>]
+  }
+}</div>
+      <div class="sample-note">Upgrading to premium widened <code>allowed_workout_days</code> from 5 days to all 7.</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-delete">DELETE</span><span class="sample-name">delete member</span><span class="sample-url">/api/admin/members/51a933d8...</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"message"</span>: <span class="s">"Member deleted successfully."</span>
+}</div>
+    </div>
+
+    <!-- ===== ADMIN — INSIGHT & REPORTS ===== -->
+    <h2 class="cat-heading"><span style="color:var(--violet)">Admin — insight &amp; reports</span><span class="dash"></span></h2>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-get">GET</span><span class="sample-name">member workout history — Hassan</span><span class="sample-url">/api/admin/members/ad2a5642.../workouts</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"member"</span>: {
+    <span class="k">"id"</span>: <span class="s">"ad2a5642-4deb-4b14-8484-e5153dd5dc5c"</span>,
+    <span class="k">"full_name"</span>: <span class="s">"Hassan Brown"</span>,
+    <span class="k">"subscription_plan"</span>: <span class="s">"premium"</span>
+    <span class="z">// ...full member record</span>
+  },
+  <span class="k">"workouts"</span>: [
+    <span class="z">// ...paginated workout entries, same shape as /workouts/history</span>
+  ],
+  <span class="k">"total"</span>: <span class="n">107</span>,
+  <span class="k">"page"</span>: <span class="n">1</span>,
+  <span class="k">"limit"</span>: <span class="n">15</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-get">GET</span><span class="sample-name">gym-wide statistics</span><span class="sample-url">/api/admin/statistics</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"totalMembers"</span>: <span class="n">260</span>,
+  <span class="k">"activeSubscriptions"</span>: <span class="n">220</span>,
+  <span class="k">"totalWorkouts"</span>: <span class="n">13174</span>,
+  <span class="k">"totalCalories"</span>: <span class="n">6814906</span>,
+  <span class="k">"averageDuration"</span>: <span class="n">3908.55</span>,
+  <span class="k">"mostPopularWorkoutType"</span>: <span class="s">"strength"</span>
+}</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-get">GET</span><span class="sample-name">member report — JSON</span><span class="sample-url">/api/reports/ad2a5642...</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"report"</span>: {
+    <span class="k">"member"</span>: { <span class="z">/* full member record */</span> },
+    <span class="k">"workouts"</span>: [ <span class="z">/* full unpaginated workout list */</span> ],
+    <span class="k">"stats"</span>: {
+      <span class="k">"totalWorkouts"</span>: <span class="n">107</span>,
+      <span class="k">"totalCalories"</span>: <span class="n">51480</span>,
+      <span class="k">"averageDuration"</span>: <span class="n">3744.58</span>,
+      <span class="k">"mostActiveDay"</span>: <span class="s">"wednesday"</span>,
+      <span class="k">"leastActiveDay"</span>: <span class="s">"sunday"</span>,
+      <span class="k">"chart"</span>: { <span class="z">/* same byDay / byType shape as the dashboard */</span> }
+    }
+  }
+}</div>
+      <div class="sample-note">Same <code>stats</code> shape as the member-facing dashboard, plus the full member and workout records — this is the single call the admin detail page needs.</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-get">GET</span><span class="sample-name">member report — QR code</span><span class="sample-url">/api/reports/ad2a5642.../qr</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">{
+  <span class="k">"qrCode"</span>: <span class="s">"data:image/png;base64,iVBORw0KGgo..."</span>
+}</div>
+      <div class="sample-note">A ready-to-render data URI — drop it straight into an <code>&lt;img&gt;</code> tag, no decoding needed.</div>
+    </div>
+
+    <div class="sample">
+      <div class="sample-head"><span class="sample-method m-get">GET</span><span class="sample-name">member report — printable HTML</span><span class="sample-url">/api/reports/ad2a5642.../print</span></div>
+      <div class="sample-empty">No request body</div>
+      <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
+      <div class="sample-code">Content-Type: text/html
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;title&gt;Member Report — Hassan Brown&lt;/title&gt;
+  &lt;style&gt;<span class="z">/* self-contained dark-mode stylesheet */</span>&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  <span class="z">&lt;!-- full standalone report, ready to open or print directly --&gt;</span>
+&lt;/body&gt;
+&lt;/html&gt;</div>
+      <div class="sample-note">This route returns a full HTML document, not JSON — open the response directly in a browser tab rather than parsing it.</div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="footer shell">
+  <span>PulseGym API <span class="heat-text">/</span> Test Console</span>
+  <span>Track the set. Trust the number.</span>
+</footer>
+
+<script>
+document.querySelectorAll('.ctab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('view-'+tab.dataset.view).classList.add('active');
+  });
+});
+document.querySelectorAll('.copy-btn').forEach(btn=>{
+  btn.addEventListener('click', async ()=>{
+    await navigator.clipboard.writeText(btn.dataset.copy);
+    const orig = btn.textContent;
+    btn.textContent = 'Copied';
+    setTimeout(()=>btn.textContent = orig, 1200);
+  });
+});
+</script>
+</body>
+</html>
