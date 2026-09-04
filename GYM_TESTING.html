@@ -358,11 +358,12 @@ tr:hover td{background:rgba(255,255,255,.012);}
       <p class="sec-intro">Three data services back this API before it will boot. Get each one live first, then bring the server up.</p>
       <ol class="steps">
         <li><strong>Redis Cloud</strong> — used for caching. Confirm the instance is reachable and the connection string is in <code>.env</code>.</li>
-        <li><strong>Supabase (PostgreSQL)</strong> — holds the <code>members</code> table plus auth. Run migrations against it before seeding.</li>
-        <li><strong>MongoDB Atlas</strong> — holds the <code>workouts</code> collection. No schema migration needed, just a reachable connection string.</li>
+        <li><strong>Supabase (PostgreSQL)</strong> — holds the <code>members</code> table plus auth. Push the schema with the Supabase CLI (<code>npm run supabase:push</code>) before seeding.</li>
+        <li><strong>MongoDB Atlas</strong> — holds the <code>workouts</code> collection. Run its migration with <code>npm run migrate:mongodb:up</code> — a separate tool (migrate-mongo) from the Supabase side.</li>
         <li>Copy <code>.env.example</code> to <code>.env</code> and fill in all three connection strings, then seed and start the server.</li>
       </ol>
-      <div class="command"><button class="copy-btn" data-copy="npm run migrate&#10;npm run seed&#10;npm run dev">Copy</button>npm run migrate
+      <div class="command"><button class="copy-btn" data-copy="npm run supabase:push&#10;npm run migrate:mongodb:up&#10;npm run seed&#10;npm run dev">Copy</button>npm run supabase:push
+npm run migrate:mongodb:up
 npm run seed
 npm run dev</div>
     </div>
@@ -397,10 +398,11 @@ npm run dev</div>
           <div class="db-icon">RD</div>
           <h4>Redis Cloud</h4>
           <span class="role" style="color:var(--heat)">Caching layer</span>
-          <p>Sits in front of the heavier reads — dashboards, statistics, member lists — so repeat requests don't refetch from Postgres or Mongo.</p>
+          <p>Sits in front of the dashboard, member reports, and gym-wide statistics — cached transparently, so any test that hits those routes exercises Redis whether you notice or not.</p>
           <ul>
-            <li>No test cases below hit it directly</li>
-            <li>Invalidate on write, verify on repeat <code>GET</code></li>
+            <li><code>dashboard:{memberId}</code> — 10 min TTL</li>
+            <li><code>report:{memberId}</code> — 30 min TTL</li>
+            <li><code>gym:stats</code> — 5 min TTL, admin statistics</li>
           </ul>
         </div>
       </div>
@@ -509,7 +511,7 @@ npm run dev</div>
       <h3 class="cat-heading"><span style="color:var(--violet)">Reports</span><span class="dash"></span></h3>
       <div class="ep-grid">
         <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="JSON report tested"></div><code class="ep-path">localhost:3000/api/reports/{memberId}</code><p>Full member report as JSON — profile, complete workout list, and rolled-up stats in one payload.</p></div>
-        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="QR report tested"></div><code class="ep-path">localhost:3000/api/reports/{memberId}/qr</code><p>Returns a base64 PNG QR code, most likely encoding a link to that member's printable report.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="QR report tested"></div><code class="ep-path">localhost:3000/api/reports/{memberId}/qr</code><p>Returns a base64 PNG QR code that encodes a JSON summary of the member's stats directly — not a link.</p></div>
         <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span><input class="chk" type="checkbox" aria-label="HTML report tested"></div><code class="ep-path">localhost:3000/api/reports/{memberId}/print</code><p>A complete standalone dark-mode HTML page — open it directly in a browser or hand it to a printer.</p></div>
       </div>
     </div>
@@ -596,7 +598,7 @@ npm run dev</div>
       <p class="sec-intro" style="margin-top:-6px">Drill into one member from the roster — their workout log and downloadable reports.</p>
       <div class="ep-grid">
         <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/admin/members/{id}/workouts<span class="auth-badge auth-admin">admin</span></code><p>This member's paginated workout log, viewed by the admin.</p></div>
-        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/reports/{id}<span class="auth-badge auth-admin">admin</span></code><p>Backs an on-page report summary — profile, full workout list, and stats in one JSON payload.</p></div>
+        <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/reports/{id}<span class="auth-badge auth-admin">admin</span></code><p>Backs an on-page report summary — profile, up to 100 recent workouts, and stats in one JSON payload.</p></div>
         <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/reports/{id}/qr<span class="auth-badge auth-admin">admin</span></code><p>Render the returned base64 string directly in an <code>&lt;img src="data:image/png;base64,..."&gt;</code>.</p></div>
         <div class="ep-card"><div class="ep-top"><span class="method m-get">GET</span></div><code class="ep-path">localhost:3000/api/reports/{id}/print<span class="auth-badge auth-admin">admin</span></code><p>Wire to a "print report" button — open the returned HTML in a new tab and let the browser's print dialog handle it.</p></div>
       </div>
@@ -761,7 +763,7 @@ npm run dev</div>
     <span class="k">"phone"</span>: <span class="s">"01504404152"</span>,
     <span class="k">"subscription_plan"</span>: <span class="s">"premium"</span>,
     <span class="k">"subscription_status"</span>: <span class="s">"active"</span>,
-    <span class="k">"allowed_workout_days"</span>: [<span class="s">"monday"</span>, <span class="s">"tuesday"</span>, <span class="s">"wednesday"</span>, <span class="s">"thursday"</span>, <span class="s">"friday"</span>, <span class="s">"saturday"</span>, <span class="s">"sunday"</span>],
+    <span class="k">"allowed_workout_days"</span>: [<span class="s">"sunday"</span>, <span class="s">"monday"</span>, <span class="s">"tuesday"</span>, <span class="s">"wednesday"</span>, <span class="s">"thursday"</span>, <span class="s">"friday"</span>, <span class="s">"saturday"</span>],
     <span class="k">"created_at"</span>: <span class="s">"2025-12-30T01:24:19.495+00:00"</span>,
     <span class="k">"updated_at"</span>: <span class="s">"2026-09-02T20:59:58.689+00:00"</span>
   }
@@ -783,7 +785,7 @@ npm run dev</div>
       <div class="sample-empty">No request body</div>
       <div class="status-row"><span class="sample-label" style="padding:0">Response</span><span class="status-chip st-2">200 OK</span></div>
       <div class="sample-code">{
-  <span class="k">"allowedWorkoutDays"</span>: [<span class="s">"monday"</span>, <span class="s">"tuesday"</span>, <span class="s">"wednesday"</span>, <span class="s">"thursday"</span>, <span class="s">"friday"</span>, <span class="s">"saturday"</span>, <span class="s">"sunday"</span>]
+  <span class="k">"allowedWorkoutDays"</span>: [<span class="s">"sunday"</span>, <span class="s">"monday"</span>, <span class="s">"tuesday"</span>, <span class="s">"wednesday"</span>, <span class="s">"thursday"</span>, <span class="s">"friday"</span>, <span class="s">"saturday"</span>]
 }</div>
     </div>
 
@@ -1080,7 +1082,7 @@ npm run dev</div>
     <span class="k">"full_name"</span>: <span class="s">"theFakeHimself"</span>,
     <span class="k">"subscription_plan"</span>: <span class="s">"premium"</span>,
     <span class="k">"subscription_status"</span>: <span class="s">"active"</span>,
-    <span class="k">"allowed_workout_days"</span>: [<span class="s">"monday"</span>, <span class="s">"tuesday"</span>, <span class="s">"wednesday"</span>, <span class="s">"thursday"</span>, <span class="s">"friday"</span>, <span class="s">"saturday"</span>, <span class="s">"sunday"</span>]
+    <span class="k">"allowed_workout_days"</span>: [<span class="s">"sunday"</span>, <span class="s">"monday"</span>, <span class="s">"tuesday"</span>, <span class="s">"wednesday"</span>, <span class="s">"thursday"</span>, <span class="s">"friday"</span>, <span class="s">"saturday"</span>]
   }
 }</div>
       <div class="sample-note">Upgrading to premium widened <code>allowed_workout_days</code> from 5 days to all 7.</div>
@@ -1139,7 +1141,7 @@ npm run dev</div>
       <div class="sample-code">{
   <span class="k">"report"</span>: {
     <span class="k">"member"</span>: { <span class="z">/* full member record */</span> },
-    <span class="k">"workouts"</span>: [ <span class="z">/* full unpaginated workout list */</span> ],
+    <span class="k">"workouts"</span>: [ <span class="z">/* up to 100 most recent workout entries */</span> ],
     <span class="k">"stats"</span>: {
       <span class="k">"totalWorkouts"</span>: <span class="n">107</span>,
       <span class="k">"totalCalories"</span>: <span class="n">51480</span>,

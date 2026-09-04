@@ -1,7 +1,7 @@
 {
   "name": "Pulse",
   "version": "1.0.0",
-  "description": "",
+  "description": "PulseGym backend API — Express + TypeScript service for member auth, workout tracking, dashboards, admin management, and printable/QR member reports, backed by Supabase, MongoDB Atlas, and Redis Cloud.",
   "main": "dist/server/server.js",
   "scripts": {
     "dev": "tsx watch src/server/server.ts",
@@ -20,7 +20,20 @@
     "supabase:migration:new": "supabase migration new",
     "supabase:push": "supabase db push"
   },
-  "keywords": [],
+  "keywords": [
+    "gym",
+    "fitness",
+    "workout-tracking",
+    "member-management",
+    "rest-api",
+    "express",
+    "typescript",
+    "supabase",
+    "postgresql",
+    "mongodb",
+    "redis",
+    "nodejs"
+  ],
   "type": "module",
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
