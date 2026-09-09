@@ -1,7 +1,7 @@
 {
-  "name": "Pulse",
-  "version": "1.0.0",
-  "description": "PulseGym backend API — Express + TypeScript service for member auth, workout tracking, dashboards, admin management, and printable/QR member reports, backed by Supabase, MongoDB Atlas, and Redis Cloud.",
+  "name": "elite-gym",
+  "version": "1.1.0",
+  "description": "Elite Gym backend API — Express + TypeScript service for authentication, member management, workout tracking, fitness analytics, admin operations, and member reports, powered by Supabase, MongoDB Atlas, and Redis Cloud.",
   "main": "dist/server/server.js",
   "scripts": {
     "dev": "tsx watch src/server/server.ts",
