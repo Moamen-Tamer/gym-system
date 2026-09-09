@@ -57,7 +57,7 @@ export async function startServer(): Promise<void> {
 
         if (error) throw new HttpError(503, "Failed to establish a supabase connection.");
 
-        logger.info("Supabase connected");
+        logger.info("Supabase (psql) connected");
 
         server = app.listen(env.serverPort, () => {
             logger.info(`Server running on port ${env.serverPort}`);
