@@ -1,6 +1,6 @@
 {
   "name": "elite-gym",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Elite Gym backend API — Express + TypeScript service for authentication, member management, workout tracking, fitness analytics, admin operations, and member reports, powered by Supabase, MongoDB Atlas, and Redis Cloud.",
   "main": "dist/server/server.js",
   "scripts": {
