@@ -1,0 +1,324 @@
+<div class="stats-page">
+  <!-- Topbar Header -->
+  <div class="top-header">
+    <div class="search-box">
+      <img src="./assets/icons/Container.svg" alt="Search" class="my-icon" />
+      <input type="text" placeholder="Search metrics, exercises, history..." />
+    </div>
+
+    <div class="top-actions">
+      <button class="icon-btn" title="Notifications">
+        <img src="./assets/icons/Button - Notifications.svg" alt="Notifications" class="my-icon" />
+        <span class="notification-dot"></span>
+      </button>
+
+      <button class="icon-btn" title="Settings">
+        <img src="./assets/icons/Button - Settings.svg" alt="Settings" class="my-icon" />
+      </button>
+
+      <div class="user-profile">
+        <img src="./assets/icons/Background.svg" alt="User Avatar" class="avatar" />
+        <span class="user-name">Alex M.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Title & Main Actions -->
+  <div class="stats-header">
+    <div class="heading">
+      <span class="telemetry-tag">• TELEMETRY ACTIVE • SYNCED 2M AGO</span>
+      <h1>Performance Statistics & Trends</h1>
+      <p>
+        Deep dive into volume progression, frequency analysis, heart rate zones, and muscle group
+        distribution.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <div class="filters">
+        <button
+          *ngFor="let range of ranges"
+          [class.active]="selectedRange === range"
+          (click)="fetchData(range)"
+        >
+          {{ range }}
+        </button>
+      </div>
+      <button class="pdf-btn" (click)="downloadPdf()">
+        <img src="./assets/icons/Peak.svg" alt="Download" class="my-icon" />
+        Download Analytics PDF
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="usingMockData" class="mock-note">
+    Notice: Displaying cached offline telemetry data.
+  </div>
+
+  <div *ngIf="isLoading" class="loading">Loading statistics data...</div>
+
+  <ng-container *ngIf="!isLoading && data">
+    <!-- KPI Grid (مكتوبة بشكل مباشر وبدون getIconPath) -->
+    <div class="kpi-grid">
+      <!-- Card 1 -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span>PEAK VOLUME LOAD</span>
+          <div class="icon-box">
+            <img src="./assets/icons/Peak.svg" alt="Peak" class="my-icon" />
+          </div>
+        </div>
+        <div class="kpi-value lime">
+          84,210
+          <small class="peak-badge">PEAK</small>
+        </div>
+        <div class="kpi-details">
+          <span>Lbs lifted this week</span>
+          <span class="sub-text">+6.2% vs last week</span>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span>CONSISTENCY INDEX</span>
+          <div class="icon-box">
+            <img src="./assets/icons/calender.svg" alt="Calendar" class="my-icon" />
+          </div>
+        </div>
+        <div class="kpi-value white">
+          5/5
+          <small class="sub-target">/ 4-5 Target</small>
+        </div>
+        <div class="kpi-details">
+          <span>Completed Workouts</span>
+          <span class="sub-text orange-text">12 Consecutive Weeks</span>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span>AVG HEART RATE</span>
+          <div class="icon-box">
+            <img src="./assets/icons/Heart-rate.svg" alt="Heart Rate" class="my-icon" />
+          </div>
+        </div>
+        <div class="kpi-value white">
+          142
+          <small class="unit-badge">BPM</small>
+        </div>
+        <div class="kpi-details">
+          <span>Zone 3 Aerobic Focus</span>
+          <span class="sub-text">Peak: 178 BPM</span>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span>INTENSITY RATING</span>
+          <div class="icon-box">
+            <img src="./assets/icons/Overlay.svg" alt="Intensity" class="my-icon" />
+          </div>
+        </div>
+        <div class="kpi-value lime">88%</div>
+        <div class="kpi-details">
+          <span>RPE Average 8.5</span>
+          <span class="sub-text">Optimal Load Index</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Section Row 1 -->
+    <div class="dashboard-grid">
+      <!-- Volume Chart -->
+      <div class="panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Total Volume Load Progression</h2>
+            <p>Weekly cumulative tonnage lifted (lbs) with load ceiling threshold</p>
+          </div>
+          <div class="legend">
+            <span><i class="lime-box"></i> Completed</span>
+            <span><i class="target-dash"></i> Target (78,000 lbs)</span>
+          </div>
+        </div>
+
+        <div class="volume-chart">
+          <div class="grid-lines"><span></span><span></span><span></span></div>
+          <div class="target-line-label">78k</div>
+          <div class="bars">
+            <div *ngFor="let bar of data.volumeData; trackBy: trackByIndex" class="bar-wrap">
+              <div class="bar" [style.height.%]="bar.height" [class.complete]="bar.complete"></div>
+              <small [class.active-label]="bar.complete">{{ bar.label }}</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="volume-summary">
+          <div class="summary-icon">
+            <img src="./assets/icons/Peak.svg" alt="Chart" class="my-icon" />
+          </div>
+          <div>
+            <strong>Hypertrophy Load Peak: 84,210 lbs</strong>
+            <p>+6.2% above baseline program expectation. Excellent recovery status.</p>
+          </div>
+          <em class="badge-lime">Optimal Strain</em>
+        </div>
+      </div>
+
+      <!-- Donut Discipline Split -->
+      <div class="panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Discipline Split</h2>
+            <p>Time allocated per training protocol over selected period</p>
+          </div>
+          <div class="icon-box-small">
+            <img src="./assets/icons/chart.svg" alt="Split" class="my-icon" />
+          </div>
+        </div>
+
+        <div class="donut-wrap">
+          <div class="donut">
+            <div>
+              <strong>124</strong>
+              <small>TOTAL HOURS</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="discipline-list">
+          <div *ngFor="let item of data.disciplines; trackBy: trackByIndex">
+            <span>
+              <i [style.background]="item.color"></i>
+              {{ item.name }}
+            </span>
+            <strong [style.color]="item.color === '#555555' ? '#888' : item.color"
+              >{{ item.percentage }}%</strong
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Section Row 2 -->
+    <div class="dashboard-grid second-row">
+      <!-- Muscle Heatmap -->
+      <div class="panel muscle-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Muscle Group Volume Heatmap & Split</h2>
+            <p>Weekly stimulus load index and recovery balance</p>
+          </div>
+          <span class="sub-heading-tag">High Strain Week</span>
+        </div>
+
+        <div class="muscle-list">
+          <div *ngFor="let item of data.muscleGroups; trackBy: trackByIndex">
+            <div class="muscle-info">
+              <strong>{{ item.name }}</strong>
+              <span class="status-pill" [ngClass]="item.status.toLowerCase().replace(' ', '-')">{{
+                item.status
+              }}</span>
+              <span class="vol-text">{{ item.volume }}</span>
+              <b class="rating-text">{{ item.rating }}</b>
+            </div>
+            <div class="progress">
+              <span [style.width.%]="item.progress" [style.background]="item.color"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Heart Rate Intensity -->
+      <div class="panel hr-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Heart Rate Intensity Zones</h2>
+            <p>Cardiovascular demand by energy pathway</p>
+          </div>
+          <div class="icon-box-small">
+            <img src="./assets/icons/Heart.svg" alt="Heart Rate" class="my-icon" />
+          </div>
+        </div>
+
+        <div class="zone-strip">
+          <span
+            *ngFor="let zone of data.hrZones; trackBy: trackByIndex"
+            [style.width.%]="zone.percentage"
+            [style.background]="zone.color"
+          >
+          </span>
+        </div>
+
+        <div class="zone-list">
+          <div *ngFor="let zone of data.hrZones; trackBy: trackByIndex">
+            <span>
+              <i [style.background]="zone.color"></i>
+              {{ zone.zone }}
+            </span>
+            <strong [style.color]="zone.color">
+              {{ zone.percentage }}% <small>• {{ zone.duration }}</small>
+            </strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Milestones Section -->
+    <div class="panel milestones-panel">
+      <div class="milestone-heading">
+        <div>
+          <h2>
+            <img src="./assets/icons/Overlay.svg" alt="Milestones" class="my-icon title-icon" />
+            Milestone Records & 1RM Hall
+          </h2>
+          <p>Validated peak outputs recorded during certified testing intervals</p>
+        </div>
+        <span class="methodology">Methodology: 1RM Velocity Validated</span>
+      </div>
+
+      <div class="milestones-grid">
+        <div *ngFor="let ms of data.milestones; trackBy: trackByIndex" class="milestone">
+          <div class="ms-head">
+            <i class="dot-indicator" [class.lime-dot]="ms.tag === 'New PR'"></i>
+            <strong>{{ ms.title }}</strong>
+            <em [class.pr-tag]="ms.tag === 'New PR'">{{ ms.tag }}</em>
+          </div>
+
+          <div class="weight">{{ ms.weight }} <small>lbs</small></div>
+
+          <div class="ms-foot">
+            <span>{{ ms.date }}</span>
+            <strong class="delta-text">{{ ms.delta }}</strong>
+          </div>
+
+          <div class="ms-bar">
+            <span
+              [style.width.%]="ms.progress"
+              [style.background]="ms.tag === 'New PR' ? '#caff00' : '#00df85'"
+            ></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Optimization Note -->
+    <div class="optimization">
+      <div class="optimization-icon">
+        <img src="./assets/icons/Overlay.svg" alt="Optimization" class="my-icon" />
+      </div>
+      <div>
+        <h2>Bio-Mechanical Optimization Note</h2>
+        <p>
+          Your progressive overload pace on hip-hinge patterns is outpacing hamstring recovery index
+          by 8%. Consider scheduling a designated mobility active-recovery session prior to next leg
+          block.
+        </p>
+      </div>
+      <button>Adjust Program Weights</button>
+    </div>
+  </ng-container>
+</div>
