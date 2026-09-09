@@ -13,6 +13,7 @@ import { limiter } from "../middlewares/limiter.js";
 import { logger } from "../middlewares/logger.js";
 import { notFound } from "../middlewares/notFound.js";
 import { errorHandler } from "../middlewares/error.js";
+import cors from "cors";
 
 export const app: Express = express();
 
@@ -23,6 +24,7 @@ app.use(cookieParser());
 
 // general middlewares
 app.use(helmet());
+app.use(cors());
 app.use(logger);
 
 // limiter
