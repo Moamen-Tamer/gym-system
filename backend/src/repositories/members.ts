@@ -39,9 +39,7 @@ export const fetchAllMembers = async (
         .from("members")
         .select("id, full_name, email, phone, subscription_plan, subscription_status, allowed_workout_days, created_at, updated_at");
 
-    if (search) {
-        query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
-    }
+    if (search) query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
 
     if (filter) {
         if (filter === 'elite') query = query.eq('subscription_plan', 'premium');
@@ -62,14 +60,15 @@ export const fetchAllMembers = async (
     }));
 };
 
-export const countMembers = async (search?: string, filter?: string): Promise<number> => {
+export const countMembers = async (
+    search?: string, 
+    filter?: string
+): Promise<number> => {
     let query = supabase
         .from("members")
         .select("*", { count: "exact", head: true });
 
-    if (search) {
-        query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
-    }
+    if (search) query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
 
     if (filter) {
         if (filter === 'elite') query = query.eq('subscription_plan', 'premium');

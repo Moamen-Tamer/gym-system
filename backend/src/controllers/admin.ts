@@ -36,6 +36,7 @@ export const listMembers = async (
 
         res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
         res.setHeader("Pragma", "no-cache");
+
         res.status(200).json({ members, total, page: query?.page ?? 1, limit: query?.limit ?? 20 });
     } catch (error) {
         next(error);
@@ -140,6 +141,7 @@ export const getStatistics = async (
 
         res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
         res.setHeader("Pragma", "no-cache");
+        
         res.status(200).json(stats);
     } catch (error) {
         next(error);

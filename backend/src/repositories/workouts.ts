@@ -35,9 +35,7 @@ export const stopWorkout = async (
 
     if (!workout) throw new HttpError(404, "workout not found");
 
-    if (workout.endTimestamp) {
-        return workout;
-    }
+    if (workout.endTimestamp) return workout;
 
     const endTimestamp = new Date();
     const durationMs = endTimestamp.getTime() - workout.startTimestamp.getTime();
@@ -105,6 +103,7 @@ export const countMemberWorkouts = async (
     memberId: string
 ): Promise<number> => {
     if (!isMongoReady()) return 0;
+
     try {
         return await Workout.countDocuments({ memberId });
     } catch {
@@ -116,6 +115,7 @@ export const sumMemberCalories = async (
     memberId: string
 ): Promise<number> => {
     if (!isMongoReady()) return 0;
+
     try {
         const result = await Workout.aggregate([
             { $match: { memberId, calories: { $ne: null } } },
@@ -132,6 +132,7 @@ export const averageMemberDuration = async (
     memberId: string
 ): Promise<number> => {
     if (!isMongoReady()) return 0;
+
     try {
         const result = await Workout.aggregate([
             { $match: { memberId, duration: { $ne: null } } },
@@ -148,6 +149,7 @@ export const getActiveWorkout = async (
     memberId: string
 ) => {
     if (!isMongoReady()) return null;
+
     try {
         return await Workout.findOne({ memberId, endTimestamp: null }).lean();
     } catch {
@@ -159,6 +161,7 @@ export const getWorkoutsByDay = async (
     memberId: string
 ): Promise<Record<string, number>> => {
     if (!isMongoReady()) return {};
+
     try {
         const result = await Workout.aggregate([
             { $match: { memberId } },
@@ -191,6 +194,7 @@ export const getWorkoutsByDay = async (
 
 export const countAllWorkouts = async (): Promise<number> => {
     if (!isMongoReady()) return 0;
+
     try {
         return await Workout.countDocuments();
     } catch {
@@ -200,6 +204,7 @@ export const countAllWorkouts = async (): Promise<number> => {
 
 export const sumAllCalories = async (): Promise<number> => {
     if (!isMongoReady()) return 0;
+
     try {
         const result = await Workout.aggregate([
             { $match: { calories: { $ne: null } } },
@@ -214,6 +219,7 @@ export const sumAllCalories = async (): Promise<number> => {
 
 export const averageAllDuration = async (): Promise<number> => {
     if (!isMongoReady()) return 0;
+
     try {
         const result = await Workout.aggregate([
             { $match: { duration: { $ne: null } } },
@@ -228,6 +234,7 @@ export const averageAllDuration = async (): Promise<number> => {
 
 export const getMostPopularWorkoutType = async (): Promise<string> => {
     if (!isMongoReady()) return "none";
+
     try {
         const result = await Workout.aggregate([
             { $group: { _id: "$workoutType", count: { $sum: 1 } } },
@@ -245,6 +252,7 @@ export const getWorkoutsByType = async (
     memberId: string
 ): Promise<Record<string, number>> => {
     if (!isMongoReady()) return {};
+
     try {
         const result = await Workout.aggregate([
             { $match: { memberId } },
@@ -266,6 +274,7 @@ export const getWorkoutsByType = async (
 
 export const getAllWorkoutsByDay = async (): Promise<Record<string, number>> => {
     if (!isMongoReady()) return {};
+
     try {
         const result = await Workout.aggregate([
             {
@@ -297,6 +306,7 @@ export const getAllWorkoutsByDay = async (): Promise<Record<string, number>> => 
 
 export const getAllWorkoutsByType = async (): Promise<Record<string, number>> => {
     if (!isMongoReady()) return {};
+    
     try {
         const result = await Workout.aggregate([
             { $group: { _id: "$workoutType", count: { $sum: 1 } } },

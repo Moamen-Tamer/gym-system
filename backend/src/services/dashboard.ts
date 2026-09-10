@@ -29,8 +29,10 @@ const buildChartData = (
 export const getDashboard = async (memberId: string): Promise<DashboardStats> => {
     try {
         const cached = await redis.get(makeDashboardKey(memberId)).catch(() => null);
+
         if (cached) {
             const parsed = JSON.parse(cached);
+            
             if (parsed.totalWorkouts > 0) return parsed;
         }
     } catch { }

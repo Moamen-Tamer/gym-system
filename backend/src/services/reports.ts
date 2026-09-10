@@ -63,6 +63,7 @@ const buildStats = async (memberId: string): Promise<DashboardStats> => {
 export const getMemberReport = async (memberId: string): Promise<MemberReport> => {
     try {
         const cached = await redis.get(makeReportKey(memberId)).catch(() => null);
+        
         if (cached) return JSON.parse(cached);
     } catch { }
 

@@ -16,6 +16,7 @@ export const getReport = async (
         const report = await reportService.getMemberReport(req.params.memberId);
 
         noCache(res);
+
         res.status(200).json({ report });
     } catch (error) {
         next(error);
@@ -31,6 +32,7 @@ export const getQrCode = async (
         const qrCode = await reportService.getReportQrCode(req.params.memberId);
 
         noCache(res);
+
         res.status(200).json({ qrCode });
     } catch (error) {
         next(error);
@@ -46,6 +48,7 @@ export const getPrintableReport = async (
         const html = await reportService.getPrintableReportHtml(req.params.memberId);
 
         noCache(res);
+        
         res.status(200).type("html").send(html);
     } catch (error) {
         next(error);
