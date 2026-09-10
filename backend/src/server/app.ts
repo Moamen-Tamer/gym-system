@@ -17,8 +17,12 @@ import cors from "cors";
 
 export const app: Express = express();
 
-app.use(cors());
-
+app.use(
+    cors({
+        origin: "http://localhost:4200",
+        credentials: true
+    })
+);
 
 // body parser middlewares
 app.use(express.json());
@@ -27,7 +31,6 @@ app.use(cookieParser());
 
 // general middlewares
 app.use(helmet());
-app.use(cors());
 app.use(logger);
 
 // limiter
