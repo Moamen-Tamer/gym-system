@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PulseGym — Session Log</title>
+<title>EliteGym — Session Log</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" type="image/png" href="azure-static-apps-512px.png">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -51,8 +52,8 @@
     font-family: var(--mono); font-size: 12px;
   }
   .hud-left{ display:flex; align-items:center; gap: 10px; color: var(--grey); }
-  .hud-dot{ width:7px; height:7px; border-radius:50%; background: var(--red); animation: pulse 1.6s ease-in-out infinite; }
-  @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.25; } }
+  .hud-dot{ width:7px; height:7px; border-radius:50%; background: var(--red); animation: elite 1.6s ease-in-out infinite; }
+  @keyframes elite{ 0%,100%{ opacity:1; } 50%{ opacity:.25; } }
   .hud-right{ display:flex; gap: 22px; color: var(--grey-dim); }
   .hud-right span.on{ color: var(--white); }
   @media (max-width: 700px){ .hud-right{ display:none; } }
@@ -66,7 +67,7 @@
   }
   .track{
     position: absolute;
-    left: 50%; top: 93vh; bottom: 80vh;
+    left: 50%; top: 96vh; bottom: 80vh;
     width: 2px;
     background: var(--line);
     transform: translateX(-50%);
@@ -119,15 +120,35 @@
     font-family: var(--mono); font-size: 10.5px; color: var(--grey-dim);
     letter-spacing: 0.1em; margin-right: 4px;
   }
-  .team-chip{
-    display:flex; align-items:center; gap: 7px;
-    font-family: var(--mono); font-size: 11.5px; color: var(--grey);
-    border: 1px solid var(--line); border-radius: 999px;
-    padding: 5px 12px 5px 12px;
-    text-decoration: none;
-  }
-  .team-chip:hover{ color: var(--white); border-color: var(--grey-dim); }
-  .team-chip svg{ width: 12px; height: 12px; flex-shrink: 0; opacity: 0.7; }
+  .team-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #c8c8c8;
+  background: rgba(255, 255, 255, 0.025);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+  .team-chip:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+}
+  .team-chip svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
   .team-chip:hover svg{ opacity: 1; }
   .scroll-cue{
     position:absolute; bottom: 32px; left:50%; transform: translateX(-50%);
@@ -271,7 +292,7 @@
 <body>
 
 <div class="hud">
-  <div class="hud-left"><span class="hud-dot"></span> LIVE SESSION — PULSEGYM BACKEND</div>
+  <div class="hud-left"><span class="hud-dot"></span> LIVE SESSION — ELITE GYM BACKEND</div>
   <div class="hud-right">
     <span class="on">SUPABASE</span>
     <span class="on">MONGODB</span>
@@ -286,7 +307,7 @@
     <div class="clock mono">00<span class="colon">:</span>00</div>
     <div class="clock-label">SESSION TIMER · READY</div>
     <h1>This gym app tracks <span class="hl">reps and sets</span>.<br>Its backend is built the same way.</h1>
-    <p>PulseGym's API runs on three databases and two separate logins, coordinated by one Express service. Scroll through the session below to see how it's built.</p>
+    <p>EliteGym's API runs on three databases and two separate logins, coordinated by one Express service. Scroll through the session below to see how it's built.</p>
     <div class="credits">
       <div class="byline">
         <span>BACKEND — MO'MEN TAMER (SOLO)</span>
@@ -296,7 +317,19 @@
           Mo'men Tamer
         </a>
         <span>·</span>
-        <a href="https://www.linkedin.com/in/mo-men-tamer-2005mt" target="_blank" rel="noopener">LINKEDIN</a>
+        <a
+          class="team-chip"
+          href="https://www.linkedin.com/in/moamen-tamer"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Mo'men Tamer on LinkedIn"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V8.99h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.29zM5.32 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM3.54 20.45H7.1V8.99H3.54v11.46zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45C23.21 24 24 23.23 24 22.28V1.72C24 .77 23.21 0 22.22 0z"/>
+          </svg>
+        
+          <span>Mo'men Tamer</span>
+        </a>
         <span>·</span>
         <a href="./GYM_TESTING.html">TECHNICAL CONSOLE</a>
       </div>
@@ -445,7 +478,7 @@
 
     <div class="results-card">
       <div class="results-head">
-        <span class="name">PulseGym — Session Summary</span>
+        <span class="name">EliteGym — Session Summary</span>
         <span class="date mono">SOLO BUILD · 7-PERSON TEAM PROJECT</span>
       </div>
       <div class="results-grid">
@@ -455,7 +488,7 @@
       </div>
       <div class="results-foot">
         <a href="./GYM_TESTING.html">OPEN THE TECHNICAL CONSOLE →</a>
-        <a href="./README.md">READ THE README →</a>
+        <a href="https://github.com/Moamen-Tamer/gym-system/blob/main/README.md">READ THE README →</a>
       </div>
     </div>
   </div>
@@ -463,7 +496,7 @@
 </div>
 
 <footer>
-  PULSEGYM — BACKEND ARCHITECTURE, API &amp; DATABASE DESIGN BY <a href="https://www.linkedin.com/in/mo-men-tamer-2005mt" target="_blank" rel="noopener">MO'MEN TAMER</a>. FRONTEND BY Yousef Ashraf, Ahmed Ayman, Tariq Khalaf, Ahmed Moharam
+  ELITE GYM — BACKEND ARCHITECTURE, API &amp; DATABASE DESIGN BY <a href="https://www.linkedin.com/in/mo-men-tamer-2005mt" target="_blank" rel="noopener">MO'MEN TAMER</a>. FRONTEND BY Yousef Ashraf, Ahmed Ayman, Tariq Khalaf, Ahmed Moharam
 </footer>
 
 <script>
