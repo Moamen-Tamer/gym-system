@@ -156,11 +156,6 @@ export const getPrintableReportHtml = async (memberId: string): Promise<string> 
             </tr>`)
         .join("");
 
-    const dayIcons: Record<string, string> = {
-        sunday: "S", monday: "M", tuesday: "T", wednesday: "W",
-        thursday: "T", friday: "F", saturday: "S"
-    };
-
     const byDayBars = report.stats.chart.byDay.labels
         .map((label, i) => {
             const val = report.stats.chart.byDay.values[i] ?? 0;
