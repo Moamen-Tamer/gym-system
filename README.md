@@ -15,6 +15,7 @@ A full-stack gym management platform: member registration and authentication,
 live workout tracking, progress dashboards, printable/QR member reports, and
 an admin console for managing members and viewing gym-wide statistics.
 
+[**Open the Presentation**](https://moamen-tamer.github.io/gym-system/Presentation.html)<br>
 [**Open the API / Test Console**](https://moamen-tamer.github.io/gym-system/GYM_TESTING.html)
 
 </div>
