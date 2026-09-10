@@ -47,17 +47,17 @@ frontend.
 ```
 ┌──────────────────────┐        HTTP/JSON, cookies       ┌──────────────────────┐
 │  frontend/Elite_Gym  │  ───────────────────────────►   │       backend        │
-│  Angular 21 + Boot-  │  ◄───────────────────────────   │  Express 5 + TS API  │
-│  strap, port 4200    │                                 │      port 3000       │
+│  Angular 21 + Boot-  │                                 │  Express 5 + TS API  │
+│   strap, port 4200   │  ◄───────────────────────────   │      port 3000       │
 └──────────────────────┘                                 └──────────┬───────────┘
                                                                     │
-                                     ┌──────────────────────────────┼──────────────────────────────┐
-                                     ▼                              ▼                              ▼
-                           ┌───────────────────┐          ┌───────────────────┐           ┌───────────────────┐
-                           │Supabase (Postgres)│          │   MongoDB Atlas   │           │    Redis Cloud    │
-                           │     members +     |          │                   │           | dashboard/report/ │
-                           │   authentication  │          │  workouts history |           |   stats caching   │
-                           └───────────────────┘          └───────────────────┘           └───────────────────┘
+                                     ┌──────────────────────────────┼───────────────────────────────┐
+                                     ▼                              ▼                               ▼
+                           ┌───────────────────┐          ┌───────────────────┐            ┌───────────────────┐
+                           │Supabase (Postgres)│          │   MongoDB Atlas   │            │    Redis Cloud    │
+                           │     members +     |          │                   │            | dashboard/report/ │
+                           │   authentication  │          │  workouts history |            |   stats caching   │
+                           └───────────────────┘          └───────────────────┘            └───────────────────┘
 ```
 
 - **Supabase (Postgres)** holds member accounts and drives authentication.
