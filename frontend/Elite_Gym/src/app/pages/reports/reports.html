@@ -1,0 +1,197 @@
+<div class="reports-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">ANALYTICS</p>
+      <h1 class="page-title">Member Reports</h1>
+    </div>
+    <button
+      class="btn-primary"
+      [disabled]="!selectedMemberId"
+      (click)="openPrintableReport()"
+    >
+      🖨 Generate PDF Report
+    </button>
+  </div>
+
+  <!-- Member Selector -->
+  <div class="selector-card">
+    <label class="selector-label" for="member-select">Select Member</label>
+    @if (loadingMembers) {
+      <div class="selector-loading">Loading members…</div>
+    } @else {
+      <select
+        id="member-select"
+        class="member-select"
+        [(ngModel)]="selectedMemberId"
+        (ngModelChange)="onMemberSelect()"
+      >
+        <option value="">— Choose a member —</option>
+        @for (m of members; track m.id) {
+          <option [value]="m.id">{{ m.full_name }} · {{ m.email }}</option>
+        }
+      </select>
+    }
+  </div>
+
+  <!-- Error -->
+  @if (errorMsg) {
+    <div class="error-banner">⚠ {{ errorMsg }}</div>
+  }
+
+  <!-- Loading report -->
+  @if (loadingReport) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Generating report…</p>
+    </div>
+  }
+
+  <!-- Report Content -->
+  @if (!loadingReport && report) {
+
+    <!-- Member Info Card -->
+    <div class="member-card">
+      <div class="member-avatar">
+        {{ report.member.full_name.split(' ').slice(0,2).map(w => w[0]).join('') | uppercase }}
+      </div>
+      <div class="member-details">
+        <h2 class="member-name">{{ report.member.full_name }}</h2>
+        <p class="member-email">{{ report.member.email }}</p>
+        <div class="member-meta">
+          <span class="badge">{{ report.member.subscription_plan | uppercase }}</span>
+          <span class="badge badge--status" [class.badge--active]="report.member.subscription_status === 'active'">
+            {{ report.member.subscription_status | uppercase }}
+          </span>
+          <span class="meta-item">📱 {{ report.member.phone ?? 'N/A' }}</span>
+          <span class="meta-item">📅 Since {{ report.member.created_at | date:'MMM yyyy' }}</span>
+        </div>
+      </div>
+      @if (qrCode) {
+        <img class="qr-img" [src]="qrCode" alt="QR Code" />
+      }
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🏋️</div>
+        <div class="stat-value">{{ report.stats.totalWorkouts }}</div>
+        <div class="stat-label">Total Workouts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-value">{{ report.stats.totalCalories | number }}</div>
+        <div class="stat-label">Total Calories</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏱</div>
+        <div class="stat-value">{{ formatDuration(report.stats.averageDuration) }}</div>
+        <div class="stat-label">Avg Session Duration</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-value">{{ capitalize(report.stats.mostActiveDay) }}</div>
+        <div class="stat-label">Most Active Day</div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="charts-row">
+
+      <!-- By Day Chart -->
+      <div class="chart-card">
+        <h3 class="chart-title">Workouts by Day</h3>
+        <div class="type-bars">
+          @for (label of report.stats.chart.byDay.labels; track label; let i = $index) {
+            <div class="type-row">
+              <span class="type-label">{{ label.slice(0,3) | uppercase }}</span>
+              <div class="type-track">
+                <div
+                  class="type-fill"
+                  [class.type-fill--peak]="label === report.stats.mostActiveDay"
+                  [style.width]="getBarWidth(report.stats.chart.byDay.values, i)"
+                ></div>
+              </div>
+              <span class="type-count">{{ report.stats.chart.byDay.values[i] }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- By Type Chart -->
+      <div class="chart-card">
+        <h3 class="chart-title">Workouts by Type</h3>
+        @if (report.stats.chart.byType.labels.length === 0) {
+          <div class="empty-chart">No types recorded.</div>
+        } @else {
+          <div class="type-bars">
+            @for (label of report.stats.chart.byType.labels; track label; let i = $index) {
+              <div class="type-row">
+                <span class="type-label">{{ label }}</span>
+                <div class="type-track">
+                  <div
+                    class="type-fill type-fill--type"
+                    [style.width]="getBarWidth(report.stats.chart.byType.values, i)"
+                  ></div>
+                </div>
+                <span class="type-count">{{ report.stats.chart.byType.values[i] }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Workout History Table -->
+    <div class="table-card">
+      <div class="table-header">
+        <h3 class="chart-title">Workout History</h3>
+        <span class="record-count">{{ report.workouts.length }} records</span>
+      </div>
+
+      @if (report.workouts.length === 0) {
+        <div class="empty-table">No workouts recorded for this member yet.</div>
+      } @else {
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Start</th>
+                <th>End</th>
+                <th>Duration</th>
+                <th>Type</th>
+                <th>Calories</th>
+                <th>Feedback</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (w of report.workouts; track w.startTimestamp) {
+                <tr>
+                  <td>{{ formatDate(w.startTimestamp) }}</td>
+                  <td>{{ formatDate(w.endTimestamp) }}</td>
+                  <td class="mono">{{ formatDuration(w.duration ?? 0) }}</td>
+                  <td><span class="type-pill">{{ w.workoutType }}</span></td>
+                  <td class="mono">{{ w.calories != null ? (w.calories | number) + ' kcal' : '—' }}</td>
+                  <td class="feedback-cell">{{ w.feedback ?? '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+  }
+
+  <!-- Placeholder before selection -->
+  @if (!loadingReport && !report && !errorMsg && !loadingMembers) {
+    <div class="placeholder-state">
+      <p class="placeholder-icon">📊</p>
+      <p class="placeholder-title">Select a member to view their report</p>
+      <p class="placeholder-sub">Choose a member from the dropdown above to load their full analytics report.</p>
+    </div>
+  }
+
+</div>

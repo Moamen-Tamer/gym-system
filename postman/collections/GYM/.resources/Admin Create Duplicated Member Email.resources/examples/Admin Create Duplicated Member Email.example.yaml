@@ -1,0 +1,49 @@
+$kind: http-example
+request:
+  url: http://localhost:3000/api/admin/members
+  method: POST
+  body:
+    type: json
+    content: "{\r
+
+      \    \"fullName\": \"another faker\",\r
+
+      \    \"email\": \"fake@github.com\",\r
+
+      \    \"subscriptionPlan\": \"standard\",\r
+
+      \    \"password\": \"password12345\"\r
+
+      }"
+response:
+  statusCode: 409
+  statusText: Conflict
+  headers:
+    content-security-policy: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+    cross-origin-opener-policy: same-origin
+    cross-origin-resource-policy: same-origin
+    origin-agent-cluster: ?1
+    referrer-policy: no-referrer
+    strict-transport-security: max-age=31536000; includeSubDomains
+    x-content-type-options: nosniff
+    x-dns-prefetch-control: off
+    x-download-options: noopen
+    x-frame-options: SAMEORIGIN
+    x-permitted-cross-domain-policies: none
+    x-xss-protection: "0"
+    x-ratelimit-limit: "1000"
+    x-ratelimit-remaining: "998"
+    date: Thu, 03 Sep 2026 19:38:04 GMT
+    x-ratelimit-reset: "1788465283"
+    content-type: application/json; charset=utf-8
+    content-length: "42"
+    etag: W/"2a-TUpfaSC6MIyohYxPmnnLP7Q1axY"
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "message": "Email is already registered."
+      }
+order: 1000

@@ -1,0 +1,12 @@
+$kind: http-request
+url: http://localhost:3000/api/admin/members/64d8e9dd-42d4-4ddd-91cc-a48b7fcebafc/subscription
+method: PATCH
+body:
+  type: json
+  content: "{\r
+
+    \    \"subscriptionPlan\": \"premium\"\r
+
+    }"
+examples: ./.resources/Change Subscription.resources/examples
+order: 29000

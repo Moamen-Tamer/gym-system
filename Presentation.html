@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PulseGym — Session Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black: #000000;
+    --panel: #0c0c0d;
+    --panel-2: #131314;
+    --line: #232325;
+    --line-soft: #19191a;
+    --white: #f5f5f4;
+    --grey: #9a9a97;
+    --grey-dim: #5c5c5a;
+    --red: #ff2d55;
+    --red-dim: #4a1420;
+    --green: #30d158;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0; background: var(--black); color: var(--white);
+    font-family: var(--sans); font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection{ background: var(--red); color: var(--black); }
+  a{ color: var(--white); }
+  :focus-visible{ outline: 2px solid var(--red); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce){ *{ animation: none !important; transition: none !important; } }
+
+  .mono{ font-family: var(--mono); }
+
+  .reveal{ opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
+  .reveal.in{ opacity: 1; transform: translateY(0); }
+
+  /* ============ fixed HUD top bar ============ */
+  .hud{
+    position: sticky; top: 0; z-index: 60;
+    display:flex; align-items:center; justify-content: space-between;
+    padding: 14px 28px;
+    background: rgba(0,0,0,0.82);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line-soft);
+    font-family: var(--mono); font-size: 12px;
+  }
+  .hud-left{ display:flex; align-items:center; gap: 10px; color: var(--grey); }
+  .hud-dot{ width:7px; height:7px; border-radius:50%; background: var(--red); animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.25; } }
+  .hud-right{ display:flex; gap: 22px; color: var(--grey-dim); }
+  .hud-right span.on{ color: var(--white); }
+  @media (max-width: 700px){ .hud-right{ display:none; } }
+
+  /* ============ the vertical timer track ============ */
+  .session{
+    position: relative;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+  .track{
+    position: absolute;
+    left: 50%; top: 93vh; bottom: 80vh;
+    width: 2px;
+    background: var(--line);
+    transform: translateX(-50%);
+    z-index: 0;
+  }
+  @media (max-width: 880px){ .track{ left: 34px; } }
+
+  /* ============ opening: full clock ============ */
+  .opening{
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display:flex; flex-direction: column; align-items:center; justify-content:center;
+    text-align:center;
+    padding: 60px 20px 100px;
+  }
+  .opening .clock{
+    font-family: var(--mono); font-weight: 700;
+    font-size: clamp(72px, 15vw, 200px);
+    line-height: 0.9; letter-spacing: -0.02em;
+    color: var(--white);
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+  .opening .clock .colon{ color: var(--red); animation: blink 1s step-start infinite; }
+  @keyframes blink{ 50%{ opacity: 0.15; } }
+  .opening .clock-label{ font-family: var(--mono); font-size: 12.5px; color: var(--grey-dim); letter-spacing: 0.12em; margin-bottom: 56px; }
+
+  .opening h1{
+    font-size: clamp(26px, 4vw, 42px);
+    font-weight: 800; letter-spacing: -0.01em; line-height: 1.25;
+    max-width: 760px; margin: 0 0 22px;
+  }
+  .opening h1 .hl{ color: var(--red); }
+  .opening p{ color: var(--grey); font-size: 16.5px; max-width: 520px; margin: 0 0 40px; }
+  .credits{
+    display:flex; flex-direction: column; align-items:center; gap: 16px;
+  }
+  .byline{
+    font-family: var(--mono); font-size: 12px; color: var(--grey-dim);
+    display:flex; gap: 14px; align-items:center; flex-wrap: wrap; justify-content:center;
+  }
+  .byline a{ color: var(--grey); text-decoration: none; border-bottom: 1px dotted var(--grey-dim); }
+  .byline a:hover{ color: var(--white); border-color: var(--white); }
+
+  .team-row{
+    display:flex; gap: 10px; align-items:center; flex-wrap: wrap; justify-content:center;
+    max-width: 620px;
+  }
+  .team-label{
+    font-family: var(--mono); font-size: 10.5px; color: var(--grey-dim);
+    letter-spacing: 0.1em; margin-right: 4px;
+  }
+  .team-chip{
+    display:flex; align-items:center; gap: 7px;
+    font-family: var(--mono); font-size: 11.5px; color: var(--grey);
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 5px 12px 5px 12px;
+    text-decoration: none;
+  }
+  .team-chip:hover{ color: var(--white); border-color: var(--grey-dim); }
+  .team-chip svg{ width: 12px; height: 12px; flex-shrink: 0; opacity: 0.7; }
+  .team-chip:hover svg{ opacity: 1; }
+  .scroll-cue{
+    position:absolute; bottom: 32px; left:50%; transform: translateX(-50%);
+    font-family: var(--mono); font-size: 11px; color: var(--grey-dim);
+    display:flex; flex-direction: column; align-items:center; gap:8px;
+  }
+  .scroll-cue .bar{ width:1px; height: 30px; background: linear-gradient(var(--grey-dim), transparent); animation: drop 1.8s ease-in-out infinite; }
+  @keyframes drop{ 0%{ transform: scaleY(0); transform-origin: top;} 50%{ transform: scaleY(1); transform-origin: top;} 51%{ transform-origin: bottom;} 100%{ transform: scaleY(0); transform-origin: bottom;} }
+
+  /* ============ phase marker on the track ============ */
+  .phase-marker{
+    position: relative; z-index: 2;
+    display:flex; justify-content:center;
+    padding: 90px 0 8px;
+  }
+  .phase-pill{
+    font-family: var(--mono); font-size: 12px; color: var(--black);
+    background: var(--red);
+    padding: 7px 18px; border-radius: 999px;
+    letter-spacing: 0.06em;
+    display:flex; align-items:center; gap: 8px;
+  }
+  .phase-pill .t{ font-weight: 700; }
+
+  /* ============ a "set" — content node attached to the track ============ */
+  .set{
+    position: relative; z-index: 1;
+    display:grid; grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 60px;
+    padding: 64px 0;
+  }
+  .set.reverse{ direction: rtl; }
+  .set.reverse > *{ direction: ltr; }
+  @media (max-width: 880px){
+    .set, .set.reverse{ direction: ltr; grid-template-columns: 1fr; gap: 26px; padding-left: 64px; }
+  }
+
+  .set-node{
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%,-50%);
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--black); border: 2px solid var(--red);
+    z-index: 3;
+  }
+  @media (max-width: 880px){ .set-node{ left: 34px; } }
+
+  .set-text{ padding: 0 40px; }
+  .set.reverse .set-text{ text-align: right; }
+  @media (max-width: 880px){ .set-text, .set.reverse .set-text{ text-align:left; padding: 0; } }
+
+  .set-eyebrow{ font-family: var(--mono); font-size: 12px; color: var(--red); margin-bottom: 14px; }
+  .set h2{ font-size: clamp(24px, 3vw, 34px); font-weight: 800; letter-spacing: -0.01em; margin: 0 0 16px; line-height: 1.2; }
+  .set p{ color: var(--grey); font-size: 15px; margin: 0; max-width: 460px; }
+  .set.reverse p{ margin-left: auto; }
+  @media (max-width: 880px){ .set.reverse p{ margin-left: 0; } }
+
+  .set-visual{ padding: 0 40px; }
+  @media (max-width: 880px){ .set-visual{ padding: 0; } }
+
+  /* rep counter box, used for the 3-store visual */
+  .rep-box{
+    border: 1px solid var(--line); background: var(--panel);
+    border-radius: 10px; padding: 22px 24px;
+    display:flex; align-items:center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .rep-box:last-child{ margin-bottom: 0; }
+  .rep-name{ font-weight: 700; font-size: 15px; }
+  .rep-name .sub{ display:block; font-family: var(--mono); font-size: 11px; color: var(--grey-dim); font-weight:400; margin-top:4px; }
+  .rep-tag{ font-family: var(--mono); font-size: 11px; padding: 5px 11px; border-radius: 999px; border: 1px solid; white-space:nowrap; }
+  .rep-tag.a{ color: var(--green); border-color: var(--green); }
+  .rep-tag.b{ color: var(--red); border-color: var(--red); }
+  .rep-tag.c{ color: #ffd60a; border-color: #ffd60a; }
+
+  /* heart-rate line svg used behind cache section */
+  .hr-strip{ width:100%; height: 90px; }
+
+  /* two-lane auth visual */
+  .lane-pair{ display:flex; flex-direction: column; gap: 12px; }
+  .lane{
+    border: 1px solid var(--line); background: var(--panel);
+    border-radius: 10px; padding: 18px 22px;
+  }
+  .lane .lane-top{ display:flex; justify-content: space-between; align-items:center; margin-bottom: 8px; }
+  .lane .lane-name{ font-weight: 700; font-size: 14px; }
+  .lane .lane-cookie{ font-family: var(--mono); font-size: 10.5px; color: var(--grey-dim); }
+  .lane .lane-desc{ font-size: 13px; color: var(--grey); margin:0; }
+
+  /* endpoint scoreboard */
+  .scoreboard{
+    border: 1px solid var(--line); background: var(--panel);
+    border-radius: 10px; overflow: hidden;
+  }
+  .score-row{
+    display:flex; justify-content: space-between; align-items:center;
+    padding: 16px 22px; border-bottom: 1px solid var(--line-soft);
+    font-family: var(--mono); font-size: 13px;
+  }
+  .score-row:last-child{ border-bottom: none; }
+  .score-row .label{ color: var(--grey); font-family: var(--sans); font-size: 14px; font-weight: 500; }
+  .score-row .value{ color: var(--white); font-weight: 700; font-size: 18px; }
+  .score-row .value .of{ color: var(--grey-dim); font-weight:400; font-size: 13px; }
+
+  /* ============ finish line / results card ============ */
+  .finish{
+    position: relative; z-index: 1;
+    padding: 110px 20px 0;
+    text-align: center;
+  }
+  .finish-tape{
+    width: 2px; height: 60px; background: linear-gradient(var(--line), var(--red));
+    margin: 0 auto 20px;
+  }
+  .finish .phase-eyebrow{ font-family: var(--mono); font-size: 12px; color: var(--red); margin-bottom: 18px; }
+  .finish h2{ font-size: clamp(30px, 5vw, 52px); font-weight: 800; letter-spacing: -0.015em; max-width: 760px; margin: 0 auto 50px; line-height: 1.15; }
+
+  .results-card{
+    max-width: 880px; margin: 0 auto;
+    border: 1px solid var(--line); border-radius: 16px;
+    background: var(--panel);
+    padding: clamp(24px,4vw,48px);
+    text-align: left;
+  }
+  .results-head{ display:flex; justify-content: space-between; align-items:baseline; margin-bottom: 30px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--line-soft); padding-bottom: 22px; }
+  .results-head .name{ font-weight: 800; font-size: 20px; }
+  .results-head .date{ font-family: var(--mono); font-size: 12px; color: var(--grey-dim); }
+  .results-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-bottom: 30px; }
+  @media (max-width: 640px){ .results-grid{ grid-template-columns: 1fr 1fr; } }
+  .results-stat .n{ font-family: var(--mono); font-weight:700; font-size: clamp(26px,4vw,38px); color: var(--red); line-height:1; }
+  .results-stat .l{ font-size: 12.5px; color: var(--grey); margin-top: 8px; }
+  .results-foot{ display:flex; gap: 26px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid var(--line-soft); }
+  .results-foot a{ font-family: var(--mono); font-size: 13px; text-decoration:none; color: var(--white); border-bottom: 1px solid var(--red); padding-bottom: 2px; }
+  .results-foot a:hover{ color: var(--red); }
+
+  footer{ padding: 70px 20px 40px; text-align:center; font-family: var(--mono); font-size: 11.5px; color: var(--grey-dim); }
+  footer a{ color: var(--grey); text-decoration:none; }
+  footer a:hover{ color: var(--white); }
+</style>
+</head>
+<body>
+
+<div class="hud">
+  <div class="hud-left"><span class="hud-dot"></span> LIVE SESSION — PULSEGYM BACKEND</div>
+  <div class="hud-right">
+    <span class="on">SUPABASE</span>
+    <span class="on">MONGODB</span>
+    <span class="on">REDIS</span>
+  </div>
+</div>
+
+<div class="session">
+  <div class="track"></div>
+
+  <section class="opening">
+    <div class="clock mono">00<span class="colon">:</span>00</div>
+    <div class="clock-label">SESSION TIMER · READY</div>
+    <h1>This gym app tracks <span class="hl">reps and sets</span>.<br>Its backend is built the same way.</h1>
+    <p>PulseGym's API runs on three databases and two separate logins, coordinated by one Express service. Scroll through the session below to see how it's built.</p>
+    <div class="credits">
+      <div class="byline">
+        <span>BACKEND — MO'MEN TAMER (SOLO)</span>
+        <span>·</span>
+        <a class="team-chip" href="https://github.com/Moamen-Tamer" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          Mo'men Tamer
+        </a>
+        <span>·</span>
+        <a href="https://www.linkedin.com/in/mo-men-tamer-2005mt" target="_blank" rel="noopener">LINKEDIN</a>
+        <span>·</span>
+        <a href="./GYM_TESTING.html">TECHNICAL CONSOLE</a>
+      </div>
+      <div class="team-row">
+        <span class="team-label">FRONTEND TEAM</span>
+        <a class="team-chip" href="https://github.com/eng-Yousef-Ashraf" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          Yousef Ashraf
+        </a>
+        <a class="team-chip" href="https://github.com/Ahmed-Ayman22" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          Ahmed Ayman
+        </a>
+        <a class="team-chip" href="https://github.com/TariqKhalaf" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          Tariq Khalaf
+        </a>
+        <a class="team-chip" href="https://github.com/AhmedMoharam74" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          Ahmed Moharam
+        </a>
+      </div>
+    </div>
+    <div class="scroll-cue"><span>SCROLL TO START</span><span class="bar"></span></div>
+  </section>
+
+  <div class="phase-marker reveal">
+    <div class="phase-pill"><span class="t">PHASE 1</span> · WARM-UP — AUTHENTICATION</div>
+  </div>
+
+  <div class="set reveal">
+    <div class="set-node"></div>
+    <div class="set-text">
+      <div class="set-eyebrow">01 — TWO LANES, NEVER CROSSED</div>
+      <h2>A member and the admin never share a login.</h2>
+      <p>Two independent sessions run side by side. A member never gets admin power by accident, because they're not even using the same system to log in.</p>
+    </div>
+    <div class="set-visual">
+      <div class="lane-pair">
+        <div class="lane">
+          <div class="lane-top"><span class="lane-name">Member</span><span class="lane-cookie mono">accessToken + refreshToken</span></div>
+          <p class="lane-desc">Authenticates through Supabase. Access token is short-lived; refresh token lasts 30 days.</p>
+        </div>
+        <div class="lane">
+          <div class="lane-top"><span class="lane-name">Admin</span><span class="lane-cookie mono">adminAccessToken (JWT)</span></div>
+          <p class="lane-desc">Checked against one fixed email/password pair from the environment. Its own signed token, its own guarded routes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-marker reveal">
+    <div class="phase-pill"><span class="t">PHASE 2</span> · THE WORKING SETS — DATA</div>
+  </div>
+
+  <div class="set reverse reveal">
+    <div class="set-node"></div>
+    <div class="set-text">
+      <div class="set-eyebrow">02 — THREE STORES, THREE JOBS</div>
+      <h2>No single database does all the work.</h2>
+      <p>An identity, a workout, and a cached answer are three different shapes of data. Each one lives where it's handled best, instead of forcing all of it into one box.</p>
+    </div>
+    <div class="set-visual">
+      <div class="rep-box">
+        <div class="rep-name">Supabase<span class="sub">members table + auth · Postgres</span></div>
+        <span class="rep-tag a">IDENTITY</span>
+      </div>
+      <div class="rep-box">
+        <div class="rep-name">MongoDB Atlas<span class="sub">workout sessions · Mongoose</span></div>
+        <span class="rep-tag b">ACTIVITY</span>
+      </div>
+      <div class="rep-box">
+        <div class="rep-name">Redis Cloud<span class="sub">dashboard, report &amp; stats cache</span></div>
+        <span class="rep-tag c">SPEED</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="set reveal">
+    <div class="set-node"></div>
+    <div class="set-text">
+      <div class="set-eyebrow">03 — WHAT A SET LOOKS LIKE</div>
+      <h2>Start. Work. Stop. Measure.</h2>
+      <p>A workout is a document, not a row: a start time, a type, an end time and duration once it's stopped, calories if given, and optional feedback after. Written once, read back on the dashboard.</p>
+    </div>
+    <div class="set-visual">
+      <svg viewBox="0 0 460 130" class="hr-strip" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Workout lifecycle: start, active, stop, feedback">
+        <line x1="10" y1="65" x2="450" y2="65" stroke="#232325" stroke-width="1"/>
+        <polyline points="10,65 90,65 110,20 130,105 150,65 320,65 340,30 360,90 380,65 450,65"
+                  fill="none" stroke="#ff2d55" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="10" cy="65" r="5" fill="#30d158"/>
+        <circle cx="450" cy="65" r="5" fill="#ff2d55"/>
+        <text x="10" y="100" fill="#5c5c5a" font-family="Space Mono, monospace" font-size="10">START</text>
+        <text x="330" y="115" fill="#5c5c5a" font-family="Space Mono, monospace" font-size="10">STOP + FEEDBACK</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="phase-marker reveal">
+    <div class="phase-pill"><span class="t">PHASE 3</span> · COOLDOWN — CACHING</div>
+  </div>
+
+  <div class="set reverse reveal">
+    <div class="set-node"></div>
+    <div class="set-text">
+      <div class="set-eyebrow">04 — RECOVERY TIME, ON PURPOSE</div>
+      <h2>Three pages don't need a fresh answer every time.</h2>
+      <p>A dashboard, a report, and the gym's overall numbers get asked for constantly but don't change every second. Redis holds the last answer so the other databases can rest.</p>
+    </div>
+    <div class="set-visual">
+      <div class="scoreboard">
+        <div class="score-row"><span class="label">Member dashboard</span><span class="value">10<span class="of">&nbsp;min</span></span></div>
+        <div class="score-row"><span class="label">Member report (+ QR, print)</span><span class="value">30<span class="of">&nbsp;min</span></span></div>
+        <div class="score-row"><span class="label">Gym-wide statistics</span><span class="value">5<span class="of">&nbsp;min</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-marker reveal">
+    <div class="phase-pill"><span class="t">PHASE 4</span> · FULL SET LIST — THE API</div>
+  </div>
+
+  <div class="set reveal">
+    <div class="set-node"></div>
+    <div class="set-text">
+      <div class="set-eyebrow">05 — EVERY MOVE, COUNTED</div>
+      <h2>24 endpoints. Every one checked before it runs.</h2>
+      <p>Every request's body, query, and params pass through a Zod schema before a controller ever touches them — a malformed request never gets far enough to do damage.</p>
+    </div>
+    <div class="set-visual">
+      <div class="scoreboard">
+        <div class="score-row"><span class="label">Getting in the door — /api/auth</span><span class="value">4</span></div>
+        <div class="score-row"><span class="label">A member's own account — /api/members</span><span class="value">3</span></div>
+        <div class="score-row"><span class="label">Working out — /api/workouts</span><span class="value">5</span></div>
+        <div class="score-row"><span class="label">Progress view — /api/dashboard</span><span class="value">1</span></div>
+        <div class="score-row"><span class="label">Running the gym — /api/admin</span><span class="value">8</span></div>
+        <div class="score-row"><span class="label">Printable reports — /api/reports</span><span class="value">3</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="finish reveal">
+    <div class="finish-tape"></div>
+    <div class="phase-eyebrow">SESSION COMPLETE</div>
+    <h2>That's the backend — start to finish, on its own.</h2>
+
+    <div class="results-card">
+      <div class="results-head">
+        <span class="name">PulseGym — Session Summary</span>
+        <span class="date mono">SOLO BUILD · 7-PERSON TEAM PROJECT</span>
+      </div>
+      <div class="results-grid">
+        <div class="results-stat"><div class="n mono">~250</div><div class="l">seeded members across all three plans</div></div>
+        <div class="results-stat"><div class="n mono">18</div><div class="l">months of workout history per member</div></div>
+        <div class="results-stat"><div class="n mono">37</div><div class="l">saved Postman requests covering every route</div></div>
+      </div>
+      <div class="results-foot">
+        <a href="./GYM_TESTING.html">OPEN THE TECHNICAL CONSOLE →</a>
+        <a href="./README.md">READ THE README →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  PULSEGYM — BACKEND ARCHITECTURE, API &amp; DATABASE DESIGN BY <a href="https://www.linkedin.com/in/mo-men-tamer-2005mt" target="_blank" rel="noopener">MO'MEN TAMER</a>. FRONTEND BY Yousef Ashraf, Ahmed Ayman, Tariq Khalaf, Ahmed Moharam
+</footer>
+
+<script>
+  // live-ish clock ticking up, purely decorative, stops at a sensible cap
+  (function(){
+    const el = document.querySelector('.opening .clock');
+    let s = 0;
+    setInterval(() => {
+      s++;
+      const m = String(Math.floor(s/60)).padStart(2,'0');
+      const ss = String(s%60).padStart(2,'0');
+      el.innerHTML = m + '<span class="colon">:</span>' + ss;
+    }, 1000);
+  })();
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>

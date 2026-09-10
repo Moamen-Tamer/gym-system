@@ -1,0 +1,18 @@
+$kind: http-request
+url: http://localhost:3000/api/admin/members
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"fullName\": \"another faker\",\r
+
+    \    \"email\": \"fake@github.com\",\r
+
+    \    \"subscriptionPlan\": \"standard\",\r
+
+    \    \"password\": \"password12345\"\r
+
+    }"
+examples: ./.resources/Admin Create Duplicated Member Email.resources/examples
+order: 26000

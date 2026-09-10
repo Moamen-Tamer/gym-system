@@ -1,0 +1,164 @@
+$kind: http-example
+request:
+  url: http://localhost:3000/api/workouts/history?workoutType=cardio&page=1&limit=10
+  method: GET
+  queryParams:
+    workoutType: cardio
+    page: "1"
+    limit: "10"
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    content-security-policy: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+    cross-origin-opener-policy: same-origin
+    cross-origin-resource-policy: same-origin
+    origin-agent-cluster: ?1
+    referrer-policy: no-referrer
+    strict-transport-security: max-age=31536000; includeSubDomains
+    x-content-type-options: nosniff
+    x-dns-prefetch-control: off
+    x-download-options: noopen
+    x-frame-options: SAMEORIGIN
+    x-permitted-cross-domain-policies: none
+    x-xss-protection: "0"
+    x-ratelimit-limit: "1000"
+    x-ratelimit-remaining: "983"
+    date: Thu, 03 Sep 2026 17:39:44 GMT
+    x-ratelimit-reset: "1788459832"
+    content-type: application/json; charset=utf-8
+    content-length: "2999"
+    etag: W/"bb7-sT/22KcnN+znwI5aqkrbhXUpwHA"
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "workouts": [
+          {
+            "_id": "6a988e510f3e674f31b02f23",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-30T13:15:00.000Z",
+            "endTimestamp": "2026-08-30T14:30:00.000Z",
+            "duration": 4500,
+            "workoutType": "cardio",
+            "calories": 734,
+            "feedback": "Beating my personal record on deadlifts soon!",
+            "createdAt": "2026-08-30T13:15:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f21",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-27T16:43:00.000Z",
+            "endTimestamp": "2026-08-27T17:55:00.000Z",
+            "duration": 4320,
+            "workoutType": "cardio",
+            "calories": 787,
+            "feedback": null,
+            "createdAt": "2026-08-27T16:43:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f20",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-26T04:47:00.000Z",
+            "endTimestamp": "2026-08-26T05:52:00.000Z",
+            "duration": 3900,
+            "workoutType": "cardio",
+            "calories": 618,
+            "feedback": null,
+            "createdAt": "2026-08-26T04:47:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f1e",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-23T16:50:00.000Z",
+            "endTimestamp": "2026-08-23T18:33:00.000Z",
+            "duration": 6180,
+            "workoutType": "cardio",
+            "calories": 938,
+            "feedback": null,
+            "createdAt": "2026-08-23T16:50:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f17",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-03T04:17:00.000Z",
+            "endTimestamp": "2026-08-03T05:03:00.000Z",
+            "duration": 2760,
+            "workoutType": "cardio",
+            "calories": 412,
+            "feedback": null,
+            "createdAt": "2026-08-03T04:17:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f16",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-02T16:34:00.000Z",
+            "endTimestamp": "2026-08-02T17:20:00.000Z",
+            "duration": 2760,
+            "workoutType": "cardio",
+            "calories": 516,
+            "feedback": null,
+            "createdAt": "2026-08-02T16:34:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f13",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-07-26T17:36:00.000Z",
+            "endTimestamp": "2026-07-26T18:10:00.000Z",
+            "duration": 2040,
+            "workoutType": "cardio",
+            "calories": 382,
+            "feedback": null,
+            "createdAt": "2026-07-26T17:36:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f12",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-07-25T18:41:00.000Z",
+            "endTimestamp": "2026-07-25T19:30:00.000Z",
+            "duration": 2940,
+            "workoutType": "cardio",
+            "calories": 545,
+            "feedback": null,
+            "createdAt": "2026-07-25T18:41:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f10",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-07-21T19:21:00.000Z",
+            "endTimestamp": "2026-07-21T20:07:00.000Z",
+            "duration": 2760,
+            "workoutType": "cardio",
+            "calories": 461,
+            "feedback": "Best workout of the month so far.",
+            "createdAt": "2026-07-21T19:21:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f0a",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-07-12T17:01:00.000Z",
+            "endTimestamp": "2026-07-12T17:46:00.000Z",
+            "duration": 2700,
+            "workoutType": "cardio",
+            "calories": 469,
+            "feedback": null,
+            "createdAt": "2026-07-12T17:01:00.000Z",
+            "__v": 0
+          }
+        ],
+        "total": 28,
+        "page": 1,
+        "limit": 10
+      }
+order: 1000

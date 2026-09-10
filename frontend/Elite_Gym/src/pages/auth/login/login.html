@@ -1,0 +1,90 @@
+<div class="login-page">
+    <div class="login-card"> <!-- LEFT SIDE -->
+        <section class="hero-section">
+            <div class="hero-image"></div>
+            <div class="hero-overlay"></div> <!-- Logo -->
+            <div class="brand"> <img src="/logo.png" alt="logo"> <span>Elite Admin</span> </div> <!-- Bottom text -->
+            <div class="hero-content">
+                <h1> Pushing boundaries.<br> Tracking progress. </h1>
+                <div class="yellow-line"></div>
+            </div>
+        </section> <!-- RIGHT SIDE -->
+        <section class="form-section">
+            <div class="form-container">
+                <h2>Welcome Back</h2>
+                <p class="subtitle"> Access your performance dashboard to track vital metrics. </p>
+
+                <!-- Global error alert -->
+                @if (errorMessage) {
+                  <div class="error-alert" role="alert">
+                    <span>⚠ {{ errorMessage }}</span>
+                  </div>
+                }
+
+                <!-- Login Form -->
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <!-- Email -->
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <img src="/email-icon.png" alt="Email Icon" class="input-icon">
+                        <input
+                          type="email"
+                          id="email"
+                          formControlName="email"
+                          placeholder="coach@elitegym.com">
+                    </div>
+                    @if (emailControl?.invalid && emailControl?.touched) {
+                      <span class="field-error">Please enter a valid email address.</span>
+                    }
+                </div>
+
+                <!-- Password -->
+                <div class="input-group password-group">
+                    <div class="password-label">
+                        <label for="password">Password</label>
+                    </div>
+                    <div class="input-wrapper">
+                        <img src="/lock-icon.png" alt="Lock Icon" class="input-icon">
+
+                        <!-- Dynamic type binding -->
+                        <input
+                          [type]="showPassword ? 'text' : 'password'"
+                          id="password"
+                          formControlName="password"
+                          placeholder="••••••••">
+
+                        <!-- Toggle button with click event and dynamic icon source -->
+                        <button type="button" class="eye-button" (click)="togglePassword()"
+                            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+                            <img [src]="showPassword ? '/eyes-open.png' : '/eye-closed.png'"
+                                [alt]="showPassword ? 'Hide password' : 'Show password'">
+                        </button>
+                    </div>
+                    @if (passwordControl?.invalid && passwordControl?.touched) {
+                      <span class="field-error">Password must be at least 6 characters.</span>
+                    }
+                </div>
+
+                <!-- Remember -->
+                <div class="remember">
+                    <label>
+                        <input type="checkbox" formControlName="rememberMe"> <span>Remember me</span>
+                    </label>
+                </div>
+
+                <!-- Sign in -->
+                <button class="sign-in" type="submit" [disabled]="isLoading">
+                  @if (isLoading) {
+                    <span class="btn-spinner"></span> Signing in...
+                  } @else {
+                    Sign In
+                  }
+                </button>
+                </form>
+                <!-- Register -->
+                <p class="register"> New coach or athlete? <a routerLink="../register">Create an Account</a> </p>
+            </div>
+        </section>
+    </div>
+</div>

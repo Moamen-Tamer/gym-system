@@ -1,0 +1,242 @@
+$kind: http-example
+request:
+  url: http://localhost:3000/api/admin/members/ad2a5642-4deb-4b14-8484-e5153dd5dc5c/workouts?page=1&limit=15
+  method: GET
+  queryParams:
+    page: "1"
+    limit: "15"
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    content-security-policy: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+    cross-origin-opener-policy: same-origin
+    cross-origin-resource-policy: same-origin
+    origin-agent-cluster: ?1
+    referrer-policy: no-referrer
+    strict-transport-security: max-age=31536000; includeSubDomains
+    x-content-type-options: nosniff
+    x-dns-prefetch-control: off
+    x-download-options: noopen
+    x-frame-options: SAMEORIGIN
+    x-permitted-cross-domain-policies: none
+    x-xss-protection: "0"
+    x-ratelimit-limit: "1000"
+    x-ratelimit-remaining: "992"
+    date: Thu, 03 Sep 2026 19:48:03 GMT
+    x-ratelimit-reset: "1788465283"
+    content-type: application/json; charset=utf-8
+    content-length: "5009"
+    etag: W/"1391-HrYRHot951Rn5/+modJ6Sryn0r4"
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "member": {
+          "id": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+          "full_name": "Hassan Brown",
+          "email": "hassan.brown010@pulsegym.com",
+          "phone": "01504404152",
+          "subscription_plan": "premium",
+          "subscription_status": "active",
+          "allowed_workout_days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ],
+          "created_at": "2025-12-30T01:24:19.495+00:00",
+          "updated_at": "2026-09-02T20:59:58.689177+00:00"
+        },
+        "workouts": [
+          {
+            "_id": "6a99b26312be6ece16879c15",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-09-03T17:46:11.181Z",
+            "endTimestamp": "2026-09-03T18:20:01.651Z",
+            "duration": 2030,
+            "workoutType": "yoga",
+            "calories": 250,
+            "feedback": "Really relaxing session. The pace was good and the exercises were easy to follow.",
+            "createdAt": "2026-09-03T17:46:11.187Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f25",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-09-02T09:41:00.000Z",
+            "endTimestamp": "2026-09-02T11:11:00.000Z",
+            "duration": 5400,
+            "workoutType": "strength",
+            "calories": 578,
+            "feedback": null,
+            "createdAt": "2026-09-02T09:41:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f24",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-09-01T09:20:00.000Z",
+            "endTimestamp": "2026-09-01T10:45:00.000Z",
+            "duration": 5100,
+            "workoutType": "hiit",
+            "calories": 881,
+            "feedback": null,
+            "createdAt": "2026-09-01T09:20:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f23",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-30T13:15:00.000Z",
+            "endTimestamp": "2026-08-30T14:30:00.000Z",
+            "duration": 4500,
+            "workoutType": "cardio",
+            "calories": 734,
+            "feedback": "Beating my personal record on deadlifts soon!",
+            "createdAt": "2026-08-30T13:15:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f22",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-28T19:55:00.000Z",
+            "endTimestamp": "2026-08-28T21:30:00.000Z",
+            "duration": 5700,
+            "workoutType": "crossfit",
+            "calories": 1023,
+            "feedback": null,
+            "createdAt": "2026-08-28T19:55:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f21",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-27T16:43:00.000Z",
+            "endTimestamp": "2026-08-27T17:55:00.000Z",
+            "duration": 4320,
+            "workoutType": "cardio",
+            "calories": 787,
+            "feedback": null,
+            "createdAt": "2026-08-27T16:43:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f20",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-26T04:47:00.000Z",
+            "endTimestamp": "2026-08-26T05:52:00.000Z",
+            "duration": 3900,
+            "workoutType": "cardio",
+            "calories": 618,
+            "feedback": null,
+            "createdAt": "2026-08-26T04:47:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f1f",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-24T10:56:00.000Z",
+            "endTimestamp": "2026-08-24T12:14:00.000Z",
+            "duration": 4680,
+            "workoutType": "flexibility",
+            "calories": 344,
+            "feedback": null,
+            "createdAt": "2026-08-24T10:56:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f1e",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-23T16:50:00.000Z",
+            "endTimestamp": "2026-08-23T18:33:00.000Z",
+            "duration": 6180,
+            "workoutType": "cardio",
+            "calories": 938,
+            "feedback": null,
+            "createdAt": "2026-08-23T16:50:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f1d",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-21T11:47:00.000Z",
+            "endTimestamp": "2026-08-21T12:12:00.000Z",
+            "duration": 1500,
+            "workoutType": "strength",
+            "calories": 156,
+            "feedback": "Best workout of the month so far.",
+            "createdAt": "2026-08-21T11:47:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f1c",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-18T14:38:00.000Z",
+            "endTimestamp": "2026-08-18T15:39:00.000Z",
+            "duration": 3660,
+            "workoutType": "other",
+            "calories": 414,
+            "feedback": null,
+            "createdAt": "2026-08-18T14:38:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f1b",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-17T06:21:00.000Z",
+            "endTimestamp": "2026-08-17T06:54:00.000Z",
+            "duration": 1980,
+            "workoutType": "flexibility",
+            "calories": 140,
+            "feedback": null,
+            "createdAt": "2026-08-17T06:21:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f1a",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-12T04:33:00.000Z",
+            "endTimestamp": "2026-08-12T05:33:00.000Z",
+            "duration": 3600,
+            "workoutType": "crossfit",
+            "calories": 586,
+            "feedback": null,
+            "createdAt": "2026-08-12T04:33:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f19",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-11T13:20:00.000Z",
+            "endTimestamp": "2026-08-11T14:32:00.000Z",
+            "duration": 4320,
+            "workoutType": "other",
+            "calories": 476,
+            "feedback": "Slow session today, will sleep better tonight.",
+            "createdAt": "2026-08-11T13:20:00.000Z",
+            "__v": 0
+          },
+          {
+            "_id": "6a988e510f3e674f31b02f18",
+            "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+            "startTimestamp": "2026-08-05T16:56:00.000Z",
+            "endTimestamp": "2026-08-05T17:54:00.000Z",
+            "duration": 3480,
+            "workoutType": "yoga",
+            "calories": 205,
+            "feedback": "Coach pushed me harder than usual, worth it.",
+            "createdAt": "2026-08-05T16:56:00.000Z",
+            "__v": 0
+          }
+        ],
+        "total": 107,
+        "page": 1,
+        "limit": 15
+      }
+order: 1000

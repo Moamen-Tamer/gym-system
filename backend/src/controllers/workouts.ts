@@ -75,6 +75,22 @@ export const submitFeedback = async (
     }
 };
 
+export const getActiveWorkout = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        if (!req.user) throw new HttpError(401, "authentication required");
+
+        const workout = await workoutService.getActiveWorkout(req.user.id);
+
+        res.status(200).json({ workout });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const getWorkoutHistory = async (
     req: Request,
     res: Response,

@@ -1,0 +1,59 @@
+<div class="stats-page">
+    <!-- Page Title -->
+    <div class="stats-header">
+        <div class="heading">
+            <span class="telemetry-tag">ADMIN OVERVIEW</span>
+            <h1>Gym-Wide Statistics</h1>
+            <p>Gym-wide numbers, separate from any one member's dashboard.</p>
+        </div>
+
+        <button class="refresh-btn" (click)="fetchData()" [disabled]="isLoading">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10" />
+                <polyline points="1 20 1 14 7 14" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+            </svg>
+            {{ isLoading ? 'Loading...' : 'Refresh' }}
+        </button>
+    </div>
+
+    <div *ngIf="usingMockData" class="mock-note">
+        ⚠ Couldn't reach the API — showing sample data instead.
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading">
+        <div class="loading-spinner"></div>
+        Loading statistics data...
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!isLoading && hasError" class="state-box error">
+        <span>Couldn't load statistics. Please make sure you're signed in as an admin.</span>
+        <button (click)="fetchData()">Try Again</button>
+    </div>
+
+    <!-- Synced timestamp -->
+    <div class="sync-bar" *ngIf="lastUpdated && !isLoading && !hasError">
+        <span class="sync-dot"></span>
+        Last synced: {{ lastUpdated | date:'mediumTime' }}
+    </div>
+
+    <!-- KPI Grid -->
+    <div class="kpi-grid" *ngIf="!isLoading && !hasError">
+        <div class="kpi-card" *ngFor="let card of cards; trackBy: trackByIndex">
+            <div class="kpi-top">
+                <span>{{ card.title }}</span>
+                <div class="icon-box" [innerHTML]="card.iconSvg"></div>
+            </div>
+            <div class="kpi-value" [class.lime]="card.accent === 'lime'"
+                [class.white]="card.accent === 'white'">
+                {{ card.value }}
+            </div>
+            <div class="kpi-details">
+                <span>{{ card.detail }}</span>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,221 @@
+<section class="member-mgmt">
+    <header class="page-header">
+        <div>
+            <h1>Member Management</h1>
+            <p class="subtitle">Manage active rosters, subscriptions, and athlete data.</p>
+        </div>
+        <button class="btn-primary" type="button" (click)="openAddModal()">
+            <span class="icon">＋</span> Add New Member
+        </button>
+    </header>
+
+    <div class="stat-cards" *ngIf="stats as s">
+        <div class="stat-card">
+            <div class="stat-text">
+                <span class="stat-label">Total Active Members</span>
+                <span class="stat-value lime">{{ s.totalActiveMembers | number }}</span>
+            </div>
+            <div class="stat-icon">👥</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-text">
+                <span class="stat-label">Expiring Subscriptions (This Week)</span>
+                <span class="stat-value orange">{{ s.expiringSubscriptionsThisWeek }}</span>
+            </div>
+            <div class="stat-icon warn">⚠</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-text">
+                <span class="stat-label">Elite Tier Conversion</span>
+                <span class="stat-value teal">+{{ s.eliteTierConversionPercent }}%</span>
+            </div>
+            <div class="stat-icon">📈</div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="search-box">
+            <span class="icon">🔍</span>
+            <input type="text" placeholder="Search members by name or ID..." [ngModel]="searchTerm"
+                (ngModelChange)="onSearchChange($event)" />
+        </div>
+
+        <div class="filter-chips">
+            <button *ngFor="let f of filters" type="button" class="chip" [class.active]="activeFilter === f.key"
+                (click)="setFilter(f.key)">
+                {{ f.label }}
+            </button>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <div class="error-banner" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Member</th>
+                    <th>Subscription Level</th>
+                    <th>Status</th>
+                    <th>Last Workout</th>
+                    <th class="actions-col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngIf="loading">
+                    <td colspan="5" class="state-row">Loading members…</td>
+                </tr>
+
+                <tr *ngIf="!loading && members.length === 0">
+                    <td colspan="5" class="state-row">No members match your search.</td>
+                </tr>
+
+                <tr *ngFor="let member of members">
+                    <td class="member-cell">
+                        <img *ngIf="member.avatarUrl; else fallbackAvatar" [src]="member.avatarUrl" [alt]="member.name"
+                            class="avatar" />
+                        <ng-template #fallbackAvatar>
+                            <div class="avatar avatar-fallback">👤</div>
+                        </ng-template>
+                        <div>
+                            <div class="member-name">{{ member.name }}</div>
+                            <div class="member-id">ID: {{ member.memberCode }}</div>
+                        </div>
+                    </td>
+
+                    <td>
+                        <select class="tier-select" [ngClass]="tierClass(member)" [ngModel]="member.subscriptionLevel"
+                            (ngModelChange)="changePlan(member, $event)">
+                            <option value="Elite">Elite</option>
+                            <option value="Pro">Pro</option>
+                            <option value="Basic">Basic</option>
+                        </select>
+                    </td>
+
+                    <td>
+                        <span class="status-dot" [ngClass]="statusClass(member)"></span>
+                        <span class="status-text" [ngClass]="statusClass(member)">{{ statusLabel(member) }}</span>
+                    </td>
+
+                    <td>{{ formatLastWorkout(member.lastWorkoutAt) }}</td>
+
+                    <td class="actions-col">
+                        <button class="icon-btn icon-btn-edit" type="button" title="Edit member"
+                            (click)="openEditModal(member)">
+                            ✎
+                        </button>
+                        <button class="icon-btn" type="button" title="Delete member" (click)="confirmDelete(member)">
+                            🗑
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <footer class="table-footer">
+        <span class="entries-text">
+            Showing {{ (page - 1) * limit + (members.length ? 1 : 0) }}
+            to {{ (page - 1) * limit + members.length }} of {{ total }} entries
+        </span>
+
+        <div class="pagination">
+            <button type="button" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+            <button type="button" *ngFor="let p of pageNumbers" class="page-btn" [class.active]="p === page"
+                (click)="goToPage(p)">
+                {{ p }}
+            </button>
+            <button type="button" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+        </div>
+    </footer>
+
+    <div class="modal-backdrop" *ngIf="memberPendingDelete" (click)="cancelDelete()">
+        <div class="modal" (click)="$event.stopPropagation()">
+            <h3>Remove member?</h3>
+            <p>
+                This will permanently delete <strong>{{ memberPendingDelete.name }}</strong> and cannot be undone.
+            </p>
+            <div class="modal-actions">
+                <button class="btn-ghost" type="button" (click)="cancelDelete()">Cancel</button>
+                <button class="btn-danger" type="button" (click)="deleteMember()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Member -->
+    <div class="modal-backdrop" *ngIf="showAddModal" (click)="closeAddModal()">
+        <div class="modal form-modal" (click)="$event.stopPropagation()">
+            <h3>Add New Member</h3>
+
+            <div class="form-error" *ngIf="addErrors.general">{{ addErrors.general }}</div>
+
+            <label class="field">
+                <span>Full name</span>
+                <input type="text" [(ngModel)]="addForm.name" placeholder="e.g. Marcus Vance" />
+                <span class="field-error" *ngIf="addErrors.name">{{ addErrors.name }}</span>
+            </label>
+
+            <label class="field">
+                <span>Email address</span>
+                <input type="email" [(ngModel)]="addForm.email" placeholder="e.g. marcus@example.com" />
+                <span class="field-error" *ngIf="addErrors.email">{{ addErrors.email }}</span>
+            </label>
+
+            <label class="field">
+                <span>Phone number (Egyptian, e.g. 01012345678)</span>
+                <input type="tel" [(ngModel)]="addForm.phone" placeholder="e.g. 01012345678" />
+                <span class="field-error" *ngIf="addErrors.phone">{{ addErrors.phone }}</span>
+            </label>
+
+            <label class="field">
+                <span>Subscription level</span>
+                <select [(ngModel)]="addForm.subscriptionLevel">
+                    <option value="Elite">Elite</option>
+                    <option value="Pro">Pro</option>
+                    <option value="Basic">Basic</option>
+                </select>
+            </label>
+
+            <div class="modal-actions">
+                <button class="btn-ghost" type="button" (click)="closeAddModal()" [disabled]="addSubmitting">
+                    Cancel
+                </button>
+                <button class="btn-primary" type="button" (click)="submitAddMember()" [disabled]="addSubmitting">
+                    {{ addSubmitting ? 'Adding…' : 'Add Member' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Member -->
+    <div class="modal-backdrop" *ngIf="editingMember as m" (click)="closeEditModal()">
+        <div class="modal form-modal" (click)="$event.stopPropagation()">
+            <h3>Edit Member</h3>
+
+            <div class="form-error" *ngIf="editErrors.general">{{ editErrors.general }}</div>
+
+            <label class="field">
+                <span>Full name</span>
+                <input type="text" [(ngModel)]="editForm.name" />
+                <span class="field-error" *ngIf="editErrors.name">{{ editErrors.name }}</span>
+            </label>
+
+            <label class="field">
+                <span>Phone number</span>
+                <input type="tel" [(ngModel)]="editForm.phone" />
+                <span class="field-error" *ngIf="editErrors.phone">{{ editErrors.phone }}</span>
+            </label>
+
+            <div class="modal-actions">
+                <button class="btn-ghost" type="button" (click)="closeEditModal()" [disabled]="editSubmitting">
+                    Cancel
+                </button>
+                <button class="btn-primary" type="button" (click)="submitEditMember()" [disabled]="editSubmitting">
+                    {{ editSubmitting ? 'Saving…' : 'Save Changes' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,5 @@
+$kind: http-request
+url: http://localhost:3000/api/auth/logout
+method: POST
+examples: ./.resources/Logout.resources/examples
+order: 8000

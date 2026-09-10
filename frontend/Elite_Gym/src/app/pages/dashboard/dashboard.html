@@ -1,0 +1,126 @@
+<div class="dashboard-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">OVERVIEW</p>
+      <h1 class="page-title">Dashboard</h1>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading your stats…</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (!loading && errorMsg) {
+    <div class="error-banner">⚠ {{ errorMsg }}</div>
+  }
+
+  <!-- Stats Grid -->
+  @if (!loading && stats) {
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🏋️</div>
+        <div class="stat-value">{{ stats.totalWorkouts }}</div>
+        <div class="stat-label">Total Workouts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-value">{{ stats.totalCalories | number }}</div>
+        <div class="stat-label">Total Calories Burned</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏱</div>
+        <div class="stat-value">{{ formatDuration(stats.averageDuration) }}</div>
+        <div class="stat-label">Avg Session Duration</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-value">{{ capitalize(stats.mostActiveDay) }}</div>
+        <div class="stat-label">Most Active Day</div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="charts-row">
+
+      <!-- Workouts by Day -->
+      <div class="chart-card">
+        <h3 class="chart-title">Workouts by Day of Week</h3>
+        <div class="bar-chart-vertical">
+          @for (label of stats.chart.byDay.labels; track label; let i = $index) {
+            <div class="bar-col">
+              <span class="bar-count">{{ stats.chart.byDay.values[i] }}</span>
+              <div
+                class="bar-fill"
+                [class.bar-fill--peak]="isActiveDay(label)"
+                [style.height]="getBarHeight(stats.chart.byDay.values, i)"
+              ></div>
+              <span class="bar-label">{{ label.slice(0, 3) | uppercase }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Workouts by Type -->
+      <div class="chart-card">
+        <h3 class="chart-title">Workouts by Type</h3>
+
+        @if (stats.chart.byType.labels.length === 0) {
+          <div class="empty-chart">No workout types recorded yet.</div>
+        } @else {
+          <div class="type-bars">
+            @for (label of stats.chart.byType.labels; track label; let i = $index) {
+              <div class="type-row">
+                <span class="type-label">{{ label }}</span>
+                <div class="type-track">
+                  <div
+                    class="type-fill"
+                    [style.width]="getBarHeight(stats.chart.byType.values, i)"
+                  ></div>
+                </div>
+                <span class="type-count">{{ stats.chart.byType.values[i] }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+    </div>
+
+    <!-- Activity Summary -->
+    <div class="activity-card">
+      <h3 class="chart-title">Activity Summary</h3>
+      <div class="activity-grid">
+        <div class="activity-item">
+          <span class="activity-label">Most Active Day</span>
+          <span class="activity-value highlight-green">{{ capitalize(stats.mostActiveDay) }}</span>
+        </div>
+        <div class="activity-item">
+          <span class="activity-label">Least Active Day</span>
+          <span class="activity-value highlight-red">{{ capitalize(stats.leastActiveDay) }}</span>
+        </div>
+        <div class="activity-item">
+          <span class="activity-label">Total Sessions</span>
+          <span class="activity-value">{{ stats.totalWorkouts }}</span>
+        </div>
+        <div class="activity-item">
+          <span class="activity-label">Avg Duration</span>
+          <span class="activity-value">{{ formatDuration(stats.averageDuration) }}</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!loading && !errorMsg && stats && stats.totalWorkouts === 0) {
+    <div class="empty-state">
+      <p class="empty-icon">🏃</p>
+      <p class="empty-title">No workouts yet</p>
+      <p class="empty-sub">Start logging workouts to see your stats here.</p>
+    </div>
+  }
+</div>

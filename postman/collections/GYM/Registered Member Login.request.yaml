@@ -1,0 +1,14 @@
+$kind: http-request
+url: http://localhost:3000/api/auth/login
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"email\": \"moamen@yahoo.com\",\r
+
+    \    \"password\": \"password12345\"\r
+
+    }"
+examples: ./.resources/Registered Member Login.resources/examples
+order: 7000

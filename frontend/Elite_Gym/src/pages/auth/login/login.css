@@ -1,0 +1,423 @@
+* {
+    box-sizing: border-box;
+}
+
+:host {
+    display: block;
+}
+
+.login-page {
+    min-height: 100vh;
+    background: #131313;
+    color: #ffffff;
+    padding-top: 30px;
+    font-family: "Montserrat", sans-serif;
+}
+
+/* Main card */
+.login-card {
+    width: 100%;
+    max-width: 1400px;
+    min-height: calc(100vh - 52px);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #111111;
+    border: 1px solid #272727;
+}
+
+/* ========================= LEFT SIDE ========================= */
+.hero-section {
+    position: relative;
+    min-height: 510px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+}
+
+.hero-image {
+    position: absolute;
+    inset: 0;
+    background-image: url("/cover.png");
+    background-size: cover;
+}
+
+/* Brand */
+.brand {
+    position: relative;
+    z-index: 2;
+    margin: 36px 0 0 65px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.brand span {
+    font-size: 32px;
+    font-weight: bold;
+    color: #ffffff;
+    line-height: 40px;
+    letter-spacing: -0.32px;
+}
+
+/* Bottom hero text */
+.hero-content {
+    position: absolute;
+    z-index: 2;
+    left: 65px;
+    bottom: 50px;
+}
+
+.hero-content h1 {
+    margin: 0;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 30px;
+}
+
+.yellow-line {
+    width: 35px;
+    height: 4px;
+    margin-top: 13px;
+    background: #CAF300;
+}
+
+/* ========================= RIGHT SIDE ========================= */
+.form-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 470px;
+}
+
+.form-container h2 {
+    margin: 0 0 7px;
+    line-height: 32px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.subtitle {
+    margin: 0 0 25px;
+    line-height: 24px;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    color: #C5C9AC;
+    font-size: 16px;
+}
+
+/* Input groups */
+.input-group {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.input-group>label {
+    display: block;
+    width: 100%;
+    margin-bottom: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.7px;
+    font-family: 'Inter',sans-serif;
+}
+
+.input-wrapper {
+    display: flex;
+    position: relative;
+    width: 100%;
+    align-items: center;
+}
+
+.input-wrapper input {
+    display: block;
+    width: 100%;
+    height: 42px; 
+    background: #1C1B1B;
+    border: 1px solid #272727;
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 14px;
+    padding-left: 38px; 
+    padding-right: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.password-group .input-wrapper input {
+    padding-right: 40px;
+}
+
+.input-wrapper input::placeholder {
+    color: #6B7280;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: auto;
+    font-family: 'Inter',sans-serif;
+}
+
+.input-wrapper input:focus {
+    border-color: #CAF300;
+}
+
+/* Icons */
+.input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;  
+    height: 18px; 
+    z-index: 2;
+    pointer-events: none; 
+    opacity: 0.7;
+}
+
+/* Password label */
+.password-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.password-label label {
+    margin-bottom: 7px;
+}
+
+/* Eye */
+.eye-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    z-index: 2;
+}
+
+.eye-button img {
+    width: 18px;
+    height: 18px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.eye-button:hover img {
+    opacity: 1;
+}
+.input-icon, .eye-button img {
+    object-fit: contain;
+}
+/* Remember */
+.remember {
+    margin-top: -3px;
+    margin-bottom: 20px;
+    color: #C5C9AC;
+    font-size: 14px;
+    font-weight: 400;
+    font-family: "Inter",sans-serif;
+    line-height: 20px;
+}
+
+.remember label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.remember input {
+    width: 13px;
+    height: 13px;
+    accent-color: #CAF300;
+    cursor: pointer;
+}
+
+/* Sign in */
+.sign-in {
+    width: 100%;
+    height: 42px;
+    border: none;
+    border-radius: 4px;
+    background: #CAF300;
+    color: #171E00;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 28px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(200, 255, 0, 0.18);
+    transition: 0.2s;
+}
+
+.sign-in:hover {
+    background: #d5ff38;
+    transform: translateY(-1px);
+    box-shadow: 0 0 20px rgba(200, 255, 0, 0.3);
+}
+
+.sign-in:active {
+    transform: translateY(0);
+}
+
+/* Register */
+.register {
+    margin-top: 25px;
+    text-align: center;
+    color: #C5C9AC;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    font-family: 'Inter',sans-serif;
+}
+
+.register a {
+    color: #CAF300;
+    text-decoration: none;
+}
+
+.register a:hover {
+    text-decoration: underline;
+}
+
+/* ========================= TABLET ========================= */
+@media (max-width: 900px) {
+    .login-card {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-section {
+        min-height: 400px;
+    }
+
+    .form-section {
+        padding: 45px 30px;
+    }
+}
+
+/* ========================= MOBILE ========================= */
+@media (max-width: 600px) {
+    .login-page {
+        padding-top: 10px;
+    }
+
+    .top-title {
+        font-size: 12px;
+    }
+
+    .login-card {
+        min-height: auto;
+    }
+
+    .hero-section {
+        min-height: 280px;
+    }
+
+    .brand {
+        margin: 25px 25px 0;
+        font-size: 21px;
+    }
+
+    .brand-icon {
+        font-size: 21px;
+    }
+
+    .hero-content {
+        left: 25px;
+        bottom: 30px;
+    }
+
+    .hero-content h1 {
+        font-size: 18px;
+    }
+
+    .form-section {
+        padding: 40px 25px;
+    }
+
+    .form-container h2 {
+        font-size: 20px;
+    }
+}
+
+/* ========================= SMALL PHONES ========================= */
+@media (max-width: 400px) {
+    .hero-section {
+        min-height: 240px;
+    }
+
+    .form-section {
+        padding: 35px 18px;
+    }
+
+    .brand {
+        margin-left: 20px;
+    }
+
+    .hero-content {
+        left: 20px;
+    }
+}
+
+/* ========================= AUTH FEEDBACK ========================= */
+.error-alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 6px;
+    color: #f87171;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    animation: fadeIn 0.25s ease;
+}
+
+.field-error {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #f87171;
+    font-family: 'Inter', sans-serif;
+}
+
+.sign-in:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(23, 30, 0, 0.4);
+    border-top-color: #171E00;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

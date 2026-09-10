@@ -1,5 +1,5 @@
 import { HttpError } from "../errors/HttpError.js";
-import { createWorkout, stopWorkout, addFeedback, fetchWorkoutHistory, getActiveWorkout } from "../repositories/workouts.js";
+import { createWorkout, stopWorkout, addFeedback, fetchWorkoutHistory, getActiveWorkout as getActiveWorkoutRepo } from "../repositories/workouts.js";
 import { getWorkoutDays } from "./members.js";
 import { invalidateDashboardCache, invalidateReportCache } from "../repositories/cache.js";
 
@@ -31,6 +31,10 @@ export const submitFeedback = async (workoutId: string, memberId: string, feedba
     const workout = await addFeedback(workoutId, memberId, feedback);
 
     return workout;
+};
+
+export const getActiveWorkout = async (memberId: string) => {
+    return await getActiveWorkoutRepo(memberId);
 };
 
 export const getWorkoutHistory = async (memberId: string, page: number, limit: number, workoutType?: string) => {

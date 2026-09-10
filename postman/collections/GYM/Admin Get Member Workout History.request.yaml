@@ -1,0 +1,8 @@
+$kind: http-request
+url: http://localhost:3000/api/admin/members/ad2a5642-4deb-4b14-8484-e5153dd5dc5c/workouts?page=1&limit=15
+method: GET
+queryParams:
+  page: "1"
+  limit: "15"
+examples: ./.resources/Admin Get Member Workout History.resources/examples
+order: 30000

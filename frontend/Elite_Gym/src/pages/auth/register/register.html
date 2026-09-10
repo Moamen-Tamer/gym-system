@@ -1,0 +1,93 @@
+<div class="register-page">
+  <div class="register-card">
+
+    <!-- Header -->
+    <div class="card-header">
+      <h1>JOIN ELITE</h1>
+      <p>Step into high performance.</p>
+    </div>
+
+    <!-- Global alerts -->
+    @if (errorMessage) {
+      <div class="error-alert" role="alert">
+        <span>⚠ {{ errorMessage }}</span>
+      </div>
+    }
+    @if (successMessage) {
+      <div class="success-alert" role="status">
+        <span>✓ {{ successMessage }}</span>
+      </div>
+    }
+
+    <!-- Registration Form -->
+    <form class="register-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Full Name -->
+      <div class="input-group">
+        <label for="fullName">Full Name</label>
+        <input
+          type="text"
+          id="fullName"
+          formControlName="fullName"
+          placeholder="Enter your full name">
+        @if (fullNameControl?.invalid && fullNameControl?.touched) {
+          <span class="field-error">Full name must be 3–100 characters.</span>
+        }
+      </div>
+
+      <!-- Email Address -->
+      <div class="input-group">
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          placeholder="name@example.com">
+        @if (emailControl?.invalid && emailControl?.touched) {
+          <span class="field-error">Please enter a valid email address.</span>
+        }
+      </div>
+
+      <!-- Password Field with Toggle -->
+      <div class="input-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <!-- Dynamic Input Type -->
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            placeholder="Create a password">
+
+          <!-- Dynamic Eye Button -->
+          <button
+            type="button"
+            class="eye-btn"
+            (click)="togglePassword()"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+            <img
+              [src]="showPassword ? '/eyes-open.png' : '/eye-closed.png'"
+              [alt]="showPassword ? 'Hide password' : 'Show password'">
+          </button>
+        </div>
+        @if (passwordControl?.invalid && passwordControl?.touched) {
+          <span class="field-error">Password must be at least 6 characters.</span>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="submit-btn" [disabled]="isLoading">
+        @if (isLoading) {
+          <span class="btn-spinner"></span> Creating account...
+        } @else {
+          Register
+        }
+      </button>
+    </form>
+
+    <!-- Footer -->
+    <div class="card-footer">
+      Already have an account? <a routerLink="../login">Sign In</a>
+    </div>
+
+  </div>
+</div>

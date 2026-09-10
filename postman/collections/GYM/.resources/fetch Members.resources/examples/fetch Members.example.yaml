@@ -1,0 +1,126 @@
+$kind: http-example
+request:
+  url: http://localhost:3000/api/admin/members?page=2&limit=5
+  method: GET
+  queryParams:
+    page: "2"
+    limit: "5"
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    content-security-policy: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+    cross-origin-opener-policy: same-origin
+    cross-origin-resource-policy: same-origin
+    origin-agent-cluster: ?1
+    referrer-policy: no-referrer
+    strict-transport-security: max-age=31536000; includeSubDomains
+    x-content-type-options: nosniff
+    x-dns-prefetch-control: off
+    x-download-options: noopen
+    x-frame-options: SAMEORIGIN
+    x-permitted-cross-domain-policies: none
+    x-xss-protection: "0"
+    x-ratelimit-limit: "1000"
+    x-ratelimit-remaining: "999"
+    date: Thu, 03 Sep 2026 09:16:25 GMT
+    x-ratelimit-reset: "1788430586"
+    content-type: application/json; charset=utf-8
+    content-length: "1839"
+    etag: W/"72f-FsNk9VPgN7ZV1XI8dlBZCyKuz50"
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "members": [
+          {
+            "id": "a4aca120-98d8-4fe4-83eb-f90eb39d108c",
+            "full_name": "Malik Fathy",
+            "email": "malik.fathy150@pulsegym.com",
+            "phone": "01098042982",
+            "subscription_plan": "basic",
+            "subscription_status": "active",
+            "allowed_workout_days": [
+              "monday",
+              "wednesday",
+              "friday"
+            ],
+            "created_at": "2026-08-17T14:55:02.517+00:00",
+            "updated_at": "2026-09-02T21:00:00.455019+00:00"
+          },
+          {
+            "id": "2793e836-df9c-462c-9941-afb3c7e19986",
+            "full_name": "Mona Khalil",
+            "email": "mona.khalil031@pulsegym.com",
+            "phone": "01158442536",
+            "subscription_plan": "premium",
+            "subscription_status": "active",
+            "allowed_workout_days": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday",
+              "saturday",
+              "sunday"
+            ],
+            "created_at": "2026-08-16T15:55:09.95+00:00",
+            "updated_at": "2026-09-02T20:59:58.921016+00:00"
+          },
+          {
+            "id": "5058c70e-152b-4d14-aeae-db8569771f11",
+            "full_name": "Sophie Naguib",
+            "email": "sophie.naguib085@pulsegym.com",
+            "phone": "01539212012",
+            "subscription_plan": "standard",
+            "subscription_status": "active",
+            "allowed_workout_days": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday"
+            ],
+            "created_at": "2026-08-14T01:34:47.445+00:00",
+            "updated_at": "2026-09-02T20:59:59.857564+00:00"
+          },
+          {
+            "id": "d8cc3da3-9ddf-44a3-a204-1827da741cd8",
+            "full_name": "Maria Gerges",
+            "email": "maria.gerges104@pulsegym.com",
+            "phone": "01226194432",
+            "subscription_plan": "standard",
+            "subscription_status": "inactive",
+            "allowed_workout_days": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday"
+            ],
+            "created_at": "2026-08-13T17:10:08.089+00:00",
+            "updated_at": "2026-09-02T21:00:00.022247+00:00"
+          },
+          {
+            "id": "45b29992-6720-4a66-9194-d81571e2fccf",
+            "full_name": "Malak Harris",
+            "email": "malak.harris159@pulsegym.com",
+            "phone": "01239970955",
+            "subscription_plan": "basic",
+            "subscription_status": "active",
+            "allowed_workout_days": [
+              "monday",
+              "wednesday",
+              "friday"
+            ],
+            "created_at": "2026-08-13T16:54:29.184+00:00",
+            "updated_at": "2026-09-02T21:00:00.547612+00:00"
+          }
+        ],
+        "total": 252,
+        "page": 2,
+        "limit": 5
+      }
+order: 1000

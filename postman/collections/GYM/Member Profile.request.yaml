@@ -1,0 +1,5 @@
+$kind: http-request
+url: http://localhost:3000/api/members/me
+method: GET
+examples: ./.resources/Member Profile.resources/examples
+order: 12000

@@ -10,13 +10,13 @@
 <img src="https://img.shields.io/badge/Pino-7B42BC?style=flat&logo=pino&logoColor=white" />
 <img src="https://img.shields.io/badge/Helmet-8A2BE2?style=flat" />
 
-# PulseGym — Backend
+# EliteGym — Backend
 
-Express + TypeScript API for PulseGym: member registration and auth, workout
+Express + TypeScript API for EliteGym: member registration and auth, workout
 tracking, member dashboards, an admin console, and printable/QR member
 reports.
 
-[PulseGym API / Test Console](https://moamen-tamer.github.io/gym-system/GYM_TESTING.html)
+[EliteGym API / Test Console](https://moamen-tamer.github.io/gym-system/GYM_TESTING.html)
 
 </div>
 

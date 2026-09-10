@@ -1,0 +1,5 @@
+$kind: http-request
+url: http://localhost:3000/api/members/me/workout-days
+method: GET
+examples: ./.resources/Allowed Workout Days.resources/examples
+order: 14000

@@ -1,0 +1,5 @@
+$kind: http-request
+url: http://localhost:3000/api/admin/members/51a933d8-78b8-4341-8852-881f3a6ebee1
+method: DELETE
+examples: ./.resources/Admin Delete Member.resources/examples
+order: 32000

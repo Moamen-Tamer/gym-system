@@ -1,0 +1,8 @@
+$kind: http-request
+url: http://localhost:3000/api/admin/members?page=2&limit=5
+method: GET
+queryParams:
+  page: "2"
+  limit: "5"
+examples: ./.resources/fetch Members.resources/examples
+order: 2000

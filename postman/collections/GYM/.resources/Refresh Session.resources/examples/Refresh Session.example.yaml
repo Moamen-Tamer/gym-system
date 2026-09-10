@@ -1,0 +1,61 @@
+$kind: http-example
+request:
+  url: http://localhost:3000/api/auth/refresh
+  method: POST
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: content-security-policy
+      value: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+    - key: cross-origin-opener-policy
+      value: same-origin
+    - key: cross-origin-resource-policy
+      value: same-origin
+    - key: origin-agent-cluster
+      value: ?1
+    - key: referrer-policy
+      value: no-referrer
+    - key: strict-transport-security
+      value: max-age=31536000; includeSubDomains
+    - key: x-content-type-options
+      value: nosniff
+    - key: x-dns-prefetch-control
+      value: off
+    - key: x-download-options
+      value: noopen
+    - key: x-frame-options
+      value: SAMEORIGIN
+    - key: x-permitted-cross-domain-policies
+      value: none
+    - key: x-xss-protection
+      value: "0"
+    - key: x-ratelimit-limit
+      value: "1000"
+    - key: x-ratelimit-remaining
+      value: "998"
+    - key: date
+      value: Thu, 03 Sep 2026 20:33:35 GMT
+    - key: x-ratelimit-reset
+      value: "1788471149"
+    - key: set-cookie
+      value: accessToken={{supabase_service_role_api_key_1ah4}}; Max-Age=3600; Path=/; Expires=Thu, 03 Sep 2026 21:33:35 GMT; HttpOnly; SameSite=Strict
+    - key: set-cookie
+      value: refreshToken=tlapfgx5k74n; Max-Age=2592000; Path=/; Expires=Sat, 03 Oct 2026 20:33:35 GMT; HttpOnly; SameSite=Strict
+    - key: content-type
+      value: application/json; charset=utf-8
+    - key: content-length
+      value: "38"
+    - key: etag
+      value: W/"26-r3B8Hw4jtoe+6sgBQEPanBXyNIk"
+    - key: connection
+      value: keep-alive
+    - key: keep-alive
+      value: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "message": "token has been refreshed"
+      }
+order: 1000

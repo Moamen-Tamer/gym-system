@@ -3,7 +3,7 @@ import { env } from "./env.js";
 const baseCookieOptions = {
     httpOnly: true,
     secure: env.nodeEnv === "production",
-    sameSite: "strict" as const
+    sameSite: "lax" as const
 }
 
 export const accessCookieOptions = (expiresInSeconds: number) => ({

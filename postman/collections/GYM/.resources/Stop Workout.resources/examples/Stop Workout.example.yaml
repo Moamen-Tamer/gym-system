@@ -1,0 +1,50 @@
+$kind: http-example
+request:
+  url: http://localhost:3000/api/workouts/6a99b26312be6ece16879c15/stop
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: "{\r\n    \"calories\": 250\r\n}"
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    content-security-policy: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+    cross-origin-opener-policy: same-origin
+    cross-origin-resource-policy: same-origin
+    origin-agent-cluster: ?1
+    referrer-policy: no-referrer
+    strict-transport-security: max-age=31536000; includeSubDomains
+    x-content-type-options: nosniff
+    x-dns-prefetch-control: off
+    x-download-options: noopen
+    x-frame-options: SAMEORIGIN
+    x-permitted-cross-domain-policies: none
+    x-xss-protection: "0"
+    x-ratelimit-limit: "1000"
+    x-ratelimit-remaining: "999"
+    date: Thu, 03 Sep 2026 18:20:00 GMT
+    x-ratelimit-reset: "1788463201"
+    content-type: application/json; charset=utf-8
+    content-length: "262"
+    etag: W/"106-hFKw6IDZAjOqAStacYNsTsvMn9Y"
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "message": "Workout stopped.",
+        "workout": {
+          "id": "6a99b26312be6ece16879c15",
+          "memberId": "ad2a5642-4deb-4b14-8484-e5153dd5dc5c",
+          "startTimestamp": "2026-09-03T17:46:11.181Z",
+          "endTimestamp": "2026-09-03T18:20:01.651Z",
+          "duration": 2030,
+          "workoutType": "yoga",
+          "calories": 250
+        }
+      }
+order: 1000

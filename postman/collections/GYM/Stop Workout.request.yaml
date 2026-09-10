@@ -1,0 +1,10 @@
+$kind: http-request
+url: http://localhost:3000/api/workouts/6a99b26312be6ece16879c15/stop
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r\n    \"calories\": 250\r\n}"
+examples: ./.resources/Stop Workout.resources/examples
+order: 19000

@@ -1,0 +1,5 @@
+$kind: http-request
+url: http://localhost:3000/api/reports/ad2a5642-4deb-4b14-8484-e5153dd5dc5c/print
+method: GET
+examples: ./.resources/Admin Get HTML Report.resources/examples
+order: 35000

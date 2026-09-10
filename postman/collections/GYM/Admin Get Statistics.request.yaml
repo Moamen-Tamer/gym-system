@@ -1,0 +1,5 @@
+$kind: http-request
+url: http://localhost:3000/api/admin/statistics
+method: GET
+examples: ./.resources/Admin Get Statistics.resources/examples
+order: 31000

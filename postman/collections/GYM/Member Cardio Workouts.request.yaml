@@ -1,0 +1,9 @@
+$kind: http-request
+url: http://localhost:3000/api/workouts/history?workoutType=cardio&page=1&limit=10
+method: GET
+queryParams:
+  workoutType: cardio
+  page: "1"
+  limit: "10"
+examples: ./.resources/Member Cardio Workouts.resources/examples
+order: 17000

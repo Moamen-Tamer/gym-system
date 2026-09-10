@@ -2,6 +2,7 @@ import { HttpError } from "../errors/HttpError.js";
 import { fetchMemberById, fetchAllMembers, countMembers, updateMemberAfterSignup, updateMember, deleteMember, changeSubscription } from "../repositories/members.js";
 import { deleteAuthUser, existsByEmail, signUp } from "../repositories/auth.js";
 import { invalidateMemberCache, invalidateDashboardCache, invalidateReportCache } from "../repositories/cache.js";
+import mongoose from "mongoose";
 import Workout from "../models/workout.model.js";
 import type { Member } from "../types/blueprints.js";
 
@@ -29,10 +30,10 @@ export const getWorkoutDays = async (memberId: string): Promise<string[]> => {
     return member.allowed_workout_days;
 };
 
-export const listMembers = async (page: number, limit: number) => {
+export const listMembers = async (page: number, limit: number, search?: string, filter?: string) => {
     const [members, total] = await Promise.all([
-        fetchAllMembers(page, limit),
-        countMembers()
+        fetchAllMembers(page, limit, search, filter),
+        countMembers(search, filter)
     ]);
 
     return { members, total };
@@ -111,8 +112,12 @@ export const deleteMemberById = async (memberId: string): Promise<void> => {
 
     if (!member) throw new HttpError(404, "Member not found.");
 
+    const deleteWorkouts = mongoose.connection.readyState === 1
+        ? Workout.deleteMany({ memberId })
+        : Promise.resolve();
+
     await Promise.all([
-        Workout.deleteMany({ memberId }),
+        deleteWorkouts,
         deleteAuthUser(memberId),
         deleteMember(memberId),
         invalidateMemberCache(memberId),

@@ -49,7 +49,11 @@ async function shutdown(signal: string): Promise<void> {
 
 export async function startServer(): Promise<void> {
     try {
-        await connectMongo();
+        try {
+            await connectMongo();
+        } catch (mongoError) {
+            logger.warn({ err: mongoError }, "MongoDB unavailable – continuing without it (auth & Supabase routes still work)");
+        }
 
         await redis.ping();
 

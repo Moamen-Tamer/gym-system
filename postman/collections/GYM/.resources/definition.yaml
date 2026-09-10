@@ -1,0 +1,15 @@
+$kind: collection
+description: ""
+variables:
+  - key: supabase_service_role_api_key_027b
+    secret: true
+    disabled: false
+  - key: supabase_service_role_api_key_1ah4
+    secret: true
+    disabled: false
+  - key: supabase_service_role_api_key_0rsb
+    secret: true
+    disabled: false
+  - key: supabase_service_role_api_key_0jwb
+    secret: true
+    disabled: false

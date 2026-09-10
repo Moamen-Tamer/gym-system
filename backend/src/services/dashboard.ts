@@ -1,6 +1,7 @@
-import { HttpError } from "../errors/HttpError.js";
-import { fetchMemberById } from "../repositories/members.js";
-import { countMemberWorkouts, sumMemberCalories, averageMemberDuration, getWorkoutsByDay, getWorkoutsByType } from "../repositories/workouts.js";
+import {
+    countMemberWorkouts, sumMemberCalories, averageMemberDuration, getWorkoutsByDay, getWorkoutsByType,
+    countAllWorkouts, sumAllCalories, averageAllDuration, getAllWorkoutsByDay, getAllWorkoutsByType
+} from "../repositories/workouts.js";
 import type { DashboardStats, ChartData } from "../types/blueprints.js";
 import { cacheDashboard } from "../repositories/cache.js";
 import { makeDashboardKey } from "../utils/redis.js";
@@ -26,21 +27,31 @@ const buildChartData = (
 };
 
 export const getDashboard = async (memberId: string): Promise<DashboardStats> => {
-    const cached = await redis.get(makeDashboardKey(memberId));
+    try {
+        const cached = await redis.get(makeDashboardKey(memberId)).catch(() => null);
+        if (cached) {
+            const parsed = JSON.parse(cached);
+            if (parsed.totalWorkouts > 0) return parsed;
+        }
+    } catch { }
 
-    if (cached) return JSON.parse(cached);
-
-    const member = await fetchMemberById(memberId);
-
-    if (!member) throw new HttpError(404, "Member not found.");
-
-    const [totalWorkouts, totalCalories, averageDuration, dayCounts, typeCounts] = await Promise.all([
+    let [totalWorkouts, totalCalories, averageDuration, dayCounts, typeCounts] = await Promise.all([
         countMemberWorkouts(memberId),
         sumMemberCalories(memberId),
         averageMemberDuration(memberId),
         getWorkoutsByDay(memberId),
         getWorkoutsByType(memberId)
     ]);
+
+    if (totalWorkouts === 0) {
+        [totalWorkouts, totalCalories, averageDuration, dayCounts, typeCounts] = await Promise.all([
+            countAllWorkouts(),
+            sumAllCalories(),
+            averageAllDuration(),
+            getAllWorkoutsByDay(),
+            getAllWorkoutsByType()
+        ]);
+    }
 
     const allDays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
@@ -77,7 +88,11 @@ export const getDashboard = async (memberId: string): Promise<DashboardStats> =>
         chart
     };
 
-    await cacheDashboard(memberId, stats);
+    if (totalWorkouts > 0) {
+        try {
+            await cacheDashboard(memberId, stats).catch(() => {});
+        } catch { }
+    }
 
     return stats;
 };

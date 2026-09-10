@@ -32,9 +32,13 @@ export const getMemberWorkoutHistory = async (memberId: string, page: number, li
 };
 
 export const getGymStatistics = async (): Promise<GymStatistics> => {
-    const cached = await redis.get(makeGymStatsKey());
-
-    if (cached) return JSON.parse(cached);
+    try {
+        const cached = await redis.get(makeGymStatsKey()).catch(() => null);
+        if (cached) {
+            const parsed = JSON.parse(cached);
+            if (parsed.totalMembers > 0) return parsed;
+        }
+    } catch { }
 
     const [totalMembers, activeSubscriptions, totalWorkouts, totalCalories, averageDuration, mostPopularWorkoutType] = await Promise.all([
         countMembers(),
@@ -54,7 +58,9 @@ export const getGymStatistics = async (): Promise<GymStatistics> => {
         mostPopularWorkoutType
     };
 
-    await cacheGymStats(stats);
+    if (totalMembers > 0) {
+        await cacheGymStats(stats).catch(() => {});
+    }
 
     return stats;
 };

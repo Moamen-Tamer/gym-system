@@ -1,0 +1,12 @@
+$kind: http-request
+url: http://localhost:3000/api/admin/members/64d8e9dd-42d4-4ddd-91cc-a48b7fcebafc
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \    \"fullName\": \"theFakeHimself\"\r
+
+    }"
+examples: ./.resources/Admin Update Member.resources/examples
+order: 28000

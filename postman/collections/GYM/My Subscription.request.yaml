@@ -1,0 +1,5 @@
+$kind: http-request
+url: http://localhost:3000/api/members/me/subscription
+method: GET
+examples: ./.resources/My Subscription.resources/examples
+order: 13000

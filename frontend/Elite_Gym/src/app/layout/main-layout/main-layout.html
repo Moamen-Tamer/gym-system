@@ -1,0 +1,86 @@
+<div class="app-shell">
+  <!-- ───────── SIDEBAR ───────── -->
+  <aside class="sidebar">
+
+    <!-- Brand -->
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M2 9.5l2 2.5-2 2.5M22 9.5l-2 2.5 2 2.5"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">Elite Admin</span>
+        <span class="brand-sub">High Performance Unit</span>
+      </div>
+    </div>
+
+    <!-- Main Nav -->
+    <nav class="nav">
+      <a *ngFor="let item of navItems"
+         class="nav-item"
+         [routerLink]="item.route"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }">
+
+        <!-- Dashboard icon -->
+        <svg *ngIf="item.icon === 'dashboard'" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+
+        <!-- Members icon -->
+        <svg *ngIf="item.icon === 'members'" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+
+        <!-- Workouts icon -->
+        <svg *ngIf="item.icon === 'workouts'" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M2 9.5l2 2.5-2 2.5M22 9.5l-2 2.5 2 2.5"/>
+        </svg>
+
+        <!-- History icon -->
+        <svg *ngIf="item.icon === 'history'" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="12 8 12 12 14 14"/>
+          <path d="M3.05 11a9 9 0 1 0 .5-4.5L1 4"/>
+          <polyline points="1 1 1 7 7 7"/>
+        </svg>
+
+        <!-- Statistics icon -->
+        <svg *ngIf="item.icon === 'statistics'" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6"  y1="20" x2="6"  y2="14"/>
+        </svg>
+
+        <!-- Reports icon -->
+        <svg *ngIf="item.icon === 'reports'" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <!-- Bottom section -->
+    <div class="sidebar-bottom">
+        <!-- Logout -->
+      <button class="nav-item logout-btn" (click)="logout()" [disabled]="isLoggingOut">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        <span>{{ isLoggingOut ? 'Logging out...' : 'Logout' }}</span>
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- ───────── MAIN CONTENT ───────── -->
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

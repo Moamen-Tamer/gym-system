@@ -1,0 +1,207 @@
+$kind: http-example
+request:
+  url: http://localhost:3000/api/admin/members?page=2&limit=10
+  method: GET
+  queryParams:
+    page: "2"
+    limit: "10"
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    content-security-policy: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+    cross-origin-opener-policy: same-origin
+    cross-origin-resource-policy: same-origin
+    origin-agent-cluster: ?1
+    referrer-policy: no-referrer
+    strict-transport-security: max-age=31536000; includeSubDomains
+    x-content-type-options: nosniff
+    x-dns-prefetch-control: off
+    x-download-options: noopen
+    x-frame-options: SAMEORIGIN
+    x-permitted-cross-domain-policies: none
+    x-xss-protection: "0"
+    x-ratelimit-limit: "1000"
+    x-ratelimit-remaining: "987"
+    date: Thu, 03 Sep 2026 18:31:23 GMT
+    x-ratelimit-reset: "1788463201"
+    content-type: application/json; charset=utf-8
+    content-length: "3628"
+    etag: W/"e2c-EG7lNTBkjt9V+UhZmdGV8KkFf4k"
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "members": [
+          {
+            "id": "d8cc3da3-9ddf-44a3-a204-1827da741cd8",
+            "full_name": "Maria Gerges",
+            "email": "maria.gerges104@pulsegym.com",
+            "phone": "01226194432",
+            "subscription_plan": "standard",
+            "subscription_status": "inactive",
+            "allowed_workout_days": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday"
+            ],
+            "created_at": "2026-08-13T17:10:08.089+00:00",
+            "updated_at": "2026-09-02T21:00:00.022247+00:00"
+          },
+          {
+            "id": "45b29992-6720-4a66-9194-d81571e2fccf",
+            "full_name": "Malak Harris",
+            "email": "malak.harris159@pulsegym.com",
+            "phone": "01239970955",
+            "subscription_plan": "basic",
+            "subscription_status": "active",
+            "allowed_workout_days": [
+              "monday",
+              "wednesday",
+              "friday"
+            ],
+            "created_at": "2026-08-13T16:54:29.184+00:00",
+            "updated_at": "2026-09-02T21:00:00.547612+00:00"
+          },
+          {
+            "id": "fa8bdee3-9299-49b6-ab04-9d1193a4141a",
+            "full_name": "Laura Rashad",
+            "email": "laura.rashad034@pulsegym.com",
+            "phone": "01051761760",
+            "subscription_plan": "basic",
+            "subscription_status": "suspended",
+            "allowed_workout_days": [
+              "monday",
+              "wednesday",
+              "friday"
+            ],
+            "created_at": "2026-08-11T23:48:50.173+00:00",
+            "updated_at": "2026-09-02T20:59:59.025339+00:00"
+          },
+          {
+            "id": "6ed393be-d531-4a5f-9dbb-3534e24ccf06",
+            "full_name": "Peter Naguib",
+            "email": "peter.naguib116@pulsegym.com",
+            "phone": "01236337006",
+            "subscription_plan": "basic",
+            "subscription_status": "active",
+            "allowed_workout_days": [
+              "monday",
+              "wednesday",
+              "friday"
+            ],
+            "created_at": "2026-08-08T20:41:33.886+00:00",
+            "updated_at": "2026-09-02T21:00:00.131894+00:00"
+          },
+          {
+            "id": "dcb50bd3-ed08-4bc0-baa9-960e38dd0de2",
+            "full_name": "Basil Bahgat",
+            "email": "basil.bahgat240@pulsegym.com",
+            "phone": null,
+            "subscription_plan": "standard",
+            "subscription_status": "active",
+            "allowed_workout_days": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday"
+            ],
+            "created_at": "2026-08-04T23:24:46.908+00:00",
+            "updated_at": "2026-09-02T21:00:01.36384+00:00"
+          },
+          {
+            "id": "da7ed14b-a896-4033-ad8f-a4c7472323f8",
+            "full_name": "Karim Hassan",
+            "email": "karim.hassan212@pulsegym.com",
+            "phone": "01054665049",
+            "subscription_plan": "premium",
+            "subscription_status": "active",
+            "allowed_workout_days": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday",
+              "saturday",
+              "sunday"
+            ],
+            "created_at": "2026-08-01T21:58:59.26+00:00",
+            "updated_at": "2026-09-02T21:00:01.080475+00:00"
+          },
+          {
+            "id": "64787dfd-8876-417e-a2aa-d563e8d2e483",
+            "full_name": "George Rodriguez",
+            "email": "george.rodriguez146@pulsegym.com",
+            "phone": "01040521194",
+            "subscription_plan": "standard",
+            "subscription_status": "active",
+            "allowed_workout_days": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday"
+            ],
+            "created_at": "2026-07-28T12:01:20.457+00:00",
+            "updated_at": "2026-09-02T21:00:00.438571+00:00"
+          },
+          {
+            "id": "80c20bb2-9fad-43b0-9ae6-d924d42361a9",
+            "full_name": "Mostafa Sabry",
+            "email": "mostafa.sabry049@pulsegym.com",
+            "phone": "01196148754",
+            "subscription_plan": "basic",
+            "subscription_status": "inactive",
+            "allowed_workout_days": [
+              "monday",
+              "wednesday",
+              "friday"
+            ],
+            "created_at": "2026-07-24T13:49:32.874+00:00",
+            "updated_at": "2026-09-02T20:59:59.122704+00:00"
+          },
+          {
+            "id": "d5f333f9-23aa-43e5-a2a7-46b26cf04634",
+            "full_name": "Sophie Nabil",
+            "email": "sophie.nabil102@pulsegym.com",
+            "phone": "01214411623",
+            "subscription_plan": "standard",
+            "subscription_status": "active",
+            "allowed_workout_days": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday"
+            ],
+            "created_at": "2026-07-24T09:57:00.013+00:00",
+            "updated_at": "2026-09-02T20:59:59.98123+00:00"
+          },
+          {
+            "id": "6a924c2e-363f-4918-934c-a73b10fb8ac6",
+            "full_name": "George Walker",
+            "email": "george.walker153@pulsegym.com",
+            "phone": "01162211366",
+            "subscription_plan": "standard",
+            "subscription_status": "suspended",
+            "allowed_workout_days": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday"
+            ],
+            "created_at": "2026-07-23T14:57:32.925+00:00",
+            "updated_at": "2026-09-02T21:00:00.521392+00:00"
+          }
+        ],
+        "total": 254,
+        "page": 2,
+        "limit": 10
+      }
+order: 1000

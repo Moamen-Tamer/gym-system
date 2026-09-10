@@ -29,13 +29,28 @@ export const fetchMemberById = async (
 
 export const fetchAllMembers = async (
     page: number,
-    limit: number
+    limit: number,
+    search?: string,
+    filter?: string
 ) => {
     const offset = (page - 1) * limit;
 
-    const { data, error } = await supabase
+    let query = supabase
         .from("members")
-        .select("id, full_name, email, phone, subscription_plan, subscription_status, allowed_workout_days, created_at, updated_at")
+        .select("id, full_name, email, phone, subscription_plan, subscription_status, allowed_workout_days, created_at, updated_at");
+
+    if (search) {
+        query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
+    }
+
+    if (filter) {
+        if (filter === 'elite') query = query.eq('subscription_plan', 'premium');
+        else if (filter === 'pro') query = query.eq('subscription_plan', 'standard');
+        else if (filter === 'basic') query = query.eq('subscription_plan', 'basic');
+        else if (filter === 'expiring') query = query.in('subscription_status', ['expiring', 'expired']);
+    }
+
+    const { data, error } = await query
         .order("created_at", { ascending: false })
         .range(offset, offset + limit - 1);
 
@@ -47,10 +62,23 @@ export const fetchAllMembers = async (
     }));
 };
 
-export const countMembers = async (): Promise<number> => {
-    const { count, error } = await supabase
+export const countMembers = async (search?: string, filter?: string): Promise<number> => {
+    let query = supabase
         .from("members")
         .select("*", { count: "exact", head: true });
+
+    if (search) {
+        query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
+    }
+
+    if (filter) {
+        if (filter === 'elite') query = query.eq('subscription_plan', 'premium');
+        else if (filter === 'pro') query = query.eq('subscription_plan', 'standard');
+        else if (filter === 'basic') query = query.eq('subscription_plan', 'basic');
+        else if (filter === 'expiring') query = query.in('subscription_status', ['expiring', 'expired']);
+    }
+
+    const { count, error } = await query;
 
     if (error) throw new HttpError(500, "Failed to count members");
 

@@ -1,0 +1,12 @@
+$kind: http-request
+url: http://localhost:3000/api/workouts/6a99b26312be6ece16879c15/feedback
+method: PATCH
+body:
+  type: json
+  content: "{\r
+
+    \    \"feedback\": \"Really relaxing session. The pace was good and the exercises were easy to follow.\"\r
+
+    }"
+examples: ./.resources/Submit Feedback.resources/examples
+order: 20000

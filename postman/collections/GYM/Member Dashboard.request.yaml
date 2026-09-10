@@ -1,0 +1,5 @@
+$kind: http-request
+url: http://localhost:3000/api/dashboard/
+method: GET
+examples: ./.resources/Member Dashboard.resources/examples
+order: 23000

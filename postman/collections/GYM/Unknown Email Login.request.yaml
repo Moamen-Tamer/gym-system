@@ -1,0 +1,14 @@
+$kind: http-request
+url: http://localhost:3000/api/auth/login
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"email\": \"hassan@gym.com\",\r
+
+    \    \"password\": \"password12345\"\r
+
+    }"
+examples: ./.resources/Unknown Email Login.resources/examples
+order: 11000

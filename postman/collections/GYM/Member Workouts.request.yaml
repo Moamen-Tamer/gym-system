@@ -1,0 +1,8 @@
+$kind: http-request
+url: http://localhost:3000/api/workouts/history?page=2&limit=15
+method: GET
+queryParams:
+  page: "2"
+  limit: "15"
+examples: ./.resources/Member Workouts.resources/examples
+order: 16000

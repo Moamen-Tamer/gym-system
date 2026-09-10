@@ -1,0 +1,115 @@
+<div class="workout-page">
+    <header class="page-header">
+        <div>
+            <span class="eyebrow">ACTIVE WORKOUT TRACKER</span>
+            <h1>Elite Performance Gym</h1>
+            <p>Track your training session and performance in real time.</p>
+        </div>
+
+        <div class="header-status" [class.live]="isActive">
+            <span class="status-dot"></span>
+            {{ isActive ? 'Recording in progress' : 'Ready to train' }}
+        </div>
+    </header>
+
+    <section class="workout-shell">
+        <aside class="type-panel">
+            <div class="panel-title">
+                <span>WORKOUT TYPE</span>
+                <small>Choose your session</small>
+            </div>
+
+            <button *ngFor="let type of workoutTypes" class="type-button" [class.selected]="selectedType === type.value"
+                [disabled]="isActive" (click)="selectType(type.value)">
+                <span class="type-icon">{{ type.icon }}</span>
+                <span>{{ type.label }}</span>
+            </button>
+        </aside>
+
+        <main class="session-panel">
+            <div class="session-top">
+                <div>
+                    <span class="eyebrow">ACTIVE SESSION</span>
+                    <h2>{{ isActive ? 'Your workout is live' : 'Start a new session' }}</h2>
+                </div>
+
+                <span class="session-badge" [class.live]="isActive">
+                    {{ isActive ? 'LIVE' : 'IDLE' }}
+                </span>
+            </div>
+
+            <div class="timer-card">
+                <span class="timer-label">ELAPSED TIME</span>
+                <div class="timer">{{ timerText }}</div>
+                <span class="timer-sub">
+                    {{ isActive ? (selectedType | titlecase) + ' session' : '00:00:00' }}
+                </span>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">CALORIES</span>
+                    <strong>{{ calories || 0 }}</strong>
+                    <span>kcal</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">WORKOUT</span>
+                    <strong>{{ selectedType | titlecase }}</strong>
+                    <span>type</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">DURATION</span>
+                    <strong>{{ elapsedSeconds }}</strong>
+                    <span>seconds</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">STATUS</span>
+                    <strong>{{ isActive ? 'ACTIVE' : 'READY' }}</strong>
+                    <span>session</span>
+                </div>
+            </div>
+
+            <div class="input-grid">
+                <label>
+                    <span>CALORIES BURNED</span>
+                    <input type="number" min="0" [(ngModel)]="calories" [disabled]="!isActive || loading"
+                        placeholder="e.g. 540" />
+                </label>
+
+                <label>
+                    <span>SESSION NOTES / FEEDBACK</span>
+                    <textarea [(ngModel)]="feedback" [disabled]="!activeWorkout || loading" maxlength="1000"
+                        placeholder="How did it feel? Log notes or fatigue levels here..."></textarea>
+                </label>
+            </div>
+
+            <div class="messages" *ngIf="error || success">
+                <div class="message error" *ngIf="error">{{ error }}</div>
+                <div class="message success" *ngIf="success">{{ success }}</div>
+            </div>
+
+            <div class="actions">
+                <button *ngIf="!isActive" class="primary-button" [disabled]="loading" (click)="startWorkout()">
+                    {{ loading ? 'STARTING...' : 'START WORKOUT' }}
+                </button>
+
+                <button *ngIf="isActive" class="danger-button" [disabled]="loading" (click)="stopWorkout()">
+                    {{ loading ? 'STOPPING...' : '■ STOP WORKOUT' }}
+                </button>
+
+                <button *ngIf="activeWorkout && !isActive" class="secondary-button"
+                    [disabled]="loading || !feedback.trim()" (click)="saveFeedback()">
+                    SAVE FEEDBACK
+                </button>
+
+                <button *ngIf="activeWorkout && !isActive" class="secondary-button"
+                    [disabled]="loading" (click)="resetSession()">
+                    NEW SESSION
+                </button>
+            </div>
+        </main>
+    </section>
+</div>

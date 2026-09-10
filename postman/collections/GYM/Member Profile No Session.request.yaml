@@ -1,0 +1,5 @@
+$kind: http-request
+url: http://localhost:3000/api/members/me/workout-days
+method: GET
+examples: ./.resources/Member Profile No Session.resources/examples
+order: 15000

@@ -1,0 +1,138 @@
+<div class="history-page">
+    <header class="page-header">
+        <div>
+            <span class="eyebrow">WORKOUT HISTORY</span>
+            <h1>Training History</h1>
+            <p>Review your completed sessions and performance.</p>
+        </div>
+
+        <div class="total-card">
+            <span>TOTAL SESSIONS</span>
+            <strong>{{ total }}</strong>
+        </div>
+    </header>
+
+    <section class="history-card">
+        <div class="toolbar">
+            <div>
+                <h2>Previous Workouts</h2>
+                <p>Latest sessions are shown first.</p>
+            </div>
+
+            <select [(ngModel)]="selectedType" (change)="changeFilter()">
+                <option *ngFor="let type of workoutTypes" [ngValue]="type.value">
+                    {{ type.label }}
+                </option>
+            </select>
+        </div>
+
+        <div class="error-box" *ngIf="error">
+            {{ error }}
+        </div>
+
+        <div class="loading" *ngIf="loading">
+            Loading workout history...
+        </div>
+
+        <div class="empty" *ngIf="!loading && !error && workouts.length === 0">
+            <div class="empty-icon">◌</div>
+            <h3>No workouts found</h3>
+            <p>Start your first workout and it will appear here.</p>
+        </div>
+
+        <div class="table-wrap" *ngIf="!loading && workouts.length > 0">
+            <table>
+                <thead>
+                    <tr>
+                        <th>WORKOUT</th>
+                        <th>DATE</th>
+                        <th>DURATION</th>
+                        <th>CALORIES</th>
+                        <th>FEEDBACK</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let workout of workouts">
+                        <td>
+                            <div class="workout-name">
+                                <span class="workout-dot"></span>
+                                <div>
+                                    <strong>{{ typeLabel(workout.workoutType) }}</strong>
+                                    <small>#{{ workoutId(workout).slice(-8) }}</small>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>{{ formatDate(workout.startTimestamp) }}</td>
+                        <td>{{ formatDuration(workout.duration) }}</td>
+                        <td>
+                            <strong class="calories">
+                                {{ workout.calories ?? 0 }}
+                            </strong>
+                            kcal
+                        </td>
+                        <td>
+                            <span class="feedback-badge" [class.has-feedback]="!!workout.feedback">
+                                {{ workout.feedback ? 'Added' : 'No feedback' }}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="view-button" (click)="openDetails(workout)">
+                                VIEW
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer class="pagination" *ngIf="!loading && total > 0">
+            <span>
+                Page <strong>{{ page }}</strong> of <strong>{{ totalPages }}</strong>
+            </span>
+
+            <div>
+                <button [disabled]="!hasPrevious" (click)="previousPage()">‹</button>
+                <button [disabled]="!hasNext" (click)="nextPage()">›</button>
+            </div>
+        </footer>
+    </section>
+
+    <div class="modal-backdrop" *ngIf="selectedWorkout" (click)="closeDetails()">
+        <section class="details-modal" (click)="$event.stopPropagation()">
+            <button class="close" (click)="closeDetails()">×</button>
+
+            <span class="eyebrow">SESSION DETAILS</span>
+            <h2>{{ typeLabel(selectedWorkout.workoutType) }}</h2>
+
+            <div class="details-grid">
+                <div>
+                    <span>STARTED</span>
+                    <strong>{{ formatDate(selectedWorkout.startTimestamp) }}</strong>
+                </div>
+
+                <div>
+                    <span>ENDED</span>
+                    <strong>{{ formatDate(selectedWorkout.endTimestamp) }}</strong>
+                </div>
+
+                <div>
+                    <span>DURATION</span>
+                    <strong>{{ formatDuration(selectedWorkout.duration) }}</strong>
+                </div>
+
+                <div>
+                    <span>CALORIES</span>
+                    <strong>{{ selectedWorkout.calories ?? 0 }} kcal</strong>
+                </div>
+            </div>
+
+            <div class="feedback-box">
+                <span>FEEDBACK / NOTES</span>
+                <p>{{ selectedWorkout.feedback || 'No feedback was added to this session.' }}</p>
+            </div>
+        </section>
+    </div>
+</div>

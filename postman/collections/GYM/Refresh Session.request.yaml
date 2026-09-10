@@ -1,0 +1,5 @@
+$kind: http-request
+url: http://localhost:3000/api/auth/refresh
+method: POST
+examples: ./.resources/Refresh Session.resources/examples
+order: 36000

@@ -25,13 +25,17 @@ export const listMembers = async (
     next: NextFunction
 ): Promise<void> => {
     try {
-        const query = req.validated?.query as { page?: number; limit?: number } | undefined;
+        const query = req.validated?.query as { page?: number; limit?: number; search?: string; filter?: string } | undefined;
 
         const { members, total } = await memberService.listMembers(
             query?.page ?? 1,
-            query?.limit ?? 20
+            query?.limit ?? 20,
+            query?.search,
+            query?.filter
         );
 
+        res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+        res.setHeader("Pragma", "no-cache");
         res.status(200).json({ members, total, page: query?.page ?? 1, limit: query?.limit ?? 20 });
     } catch (error) {
         next(error);
@@ -134,6 +138,8 @@ export const getStatistics = async (
     try {
         const stats = await adminService.getGymStatistics();
 
+        res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+        res.setHeader("Pragma", "no-cache");
         res.status(200).json(stats);
     } catch (error) {
         next(error);
